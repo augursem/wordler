@@ -1,9 +1,12 @@
 package com.augursolutions.wordler;
 
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -40,7 +43,7 @@ import java.util.TreeMap;
  * @author Steven Major
  *
  */
-public class Dictionary {
+public class Dictionary implements Iterable<Word> {
 	private DictionaryNode rootNode;
 	private int size = 0;
 
@@ -90,7 +93,7 @@ public class Dictionary {
 		}
 		return this.rootNode;
 	}
-	
+    
 	/**
 	 * Get the {@link DictionaryNode} associated with a word fragment. For example, if the word "DOG" is in the
 	 * {@link Dictionary}, then {@code getNode("DO")} will return the node whose letter is "O" with parent "D" and child "G"
@@ -277,7 +280,7 @@ public class Dictionary {
 		protected static final Character ROOT_NODE = (char)02;
 		
 		private Character letter = null;
-		private Map<Character, DictionaryNode> children;
+		private NavigableMap<Character, DictionaryNode> children;
 		private DictionaryNode parent = null;
 		protected int distanceFromRoot = 0;
 		private Word word = null;
@@ -304,7 +307,7 @@ public class Dictionary {
 			this.letter = c;
 		}
 		 
-		public Map<Character, DictionaryNode> getChildren() {
+		public NavigableMap<Character, DictionaryNode> getChildren() {
 			return this.children;
 		}
 		
@@ -367,12 +370,118 @@ public class Dictionary {
 		
 	}
 	
+    @Override
+    public Iterator<Word> iterator() {
+        return new WordIterator();
+    }
+    
+    private class WordIterator implements Iterator<Word> {
+    	private DictionaryNode currentNode;
+    	private DictionaryNode nextChild;
+    	
+    	public WordIterator() {
+    		currentNode = getRootNode();
+    		if(currentNode.hasChildren())
+    			nextChild = getFirstChild();
+    		else
+    			nextChild = null;
+    	}
+    	
+    	/**
+    	 * Returns {@code true} if the iteration has more elements.
+    	 * <p>
+    	 * If currentNode is a WORD_ENDING node, advances currentNode
+    	 * to the next node with children. Subsequent calls will not advance currentNode further.
+    	 * Calling next() will advance currentNode to the next WORD_ENDING node and return the associated Word object.
+    	 * 
+    	 * @return {@code true} if the iteration has more elements
+    	 */
+    	public boolean hasNext() {
+    		/*
+    		 * When iterating over letters in the tree, WORD_ENDING nodes are retrieved first amongst all
+    		 * siblings, and every node that is not a WORD_ENDING node will have at least one child (a
+    		 * WORD_ENDING node if it ends a word and/or letter node(s) if part of another word).
+    		 * 
+    		 * When next() is called, currentNode is set to a WORD_ENDING node. When hasNext() is called, there
+    		 * are two cases to consider:
+    		 *   1) next() was the last call made
+    		 *   2) Iterator was just instantiated or hasNext() was the last call made
+    		 *   
+    		 * For case 1, we move backwards through the tree looking for a next node with children. Once we find one, we stop
+    		 * For case 2, we should already be at a node with children. If we are not, then this is an empty dictionary
+    		 */
+    		// CASE 1 - we are at a WORD_ENDING node
+    		if(currentNode.isWordEning()) {
+    			Character previousLetter;
+    			while(true) {
+    				previousLetter = currentNode.getLetter();
+    				if(!navigateUpTree()) {
+    					// Happens if we are got up the root and there was no next child to iterate on
+    					// i.e. we went up to root, navigateToNextChild() returned false, and we are now
+    					// calling navigateUpTree() on the root node
+    					return false;
+    				}
+    				nextChild = getNextChild(previousLetter);
+    				if(nextChild != null) {
+    					return true;
+    				}
+    			}
+    		}
+    		// CASE 2 - check if there is a valid nextChild value.
+    		return (nextChild != null);
+
+    	}
+    	
+    	public Word next() throws NoSuchElementException {
+    		if(!hasNext()) {
+    			throw new NoSuchElementException();
+    		}
+    		// hasNext() returned true, so nextChild is valid
+    		// WORD_ENDING will be the first child if present, so keep getting the
+    		// first child until a WORD_ENDING is reached.
+    		while(true) {
+    			currentNode = nextChild;
+    			if(currentNode.isWordEning()) {
+    				return currentNode.getWord();
+    			}
+    			nextChild = getFirstChild();
+    		}
+    	}
+    	
+    	/**
+    	 * Move currentNode up (closer to ROOT_NODE) one level
+    	 */
+    	private boolean navigateUpTree() {
+    		if(currentNode.isRoot())
+    			return false;
+    		currentNode = currentNode.getParent();
+    		return true;
+    	}
+    	
+    	/**
+    	 * Given a previously navigated to child, get the next child
+    	 * @param previousLetter - letter of child that was previously navigated to from this node
+    	 * @return Next node to navigate to - null if there are no more children to navigate to
+    	 */
+    	private DictionaryNode getNextChild(Character previousLetter) {
+    		Map.Entry<Character, DictionaryNode> next = currentNode.getChildren().higherEntry(previousLetter);
+    		if(next == null)
+    			return null;
+    		return next.getValue();
+    	}
+    	
+    	private DictionaryNode getFirstChild() {
+    		return currentNode.getChildren().firstEntry().getValue();
+    	}
+    }
+	
 	public static void main(String[] args) {
-		boolean runTests = false;
+		boolean runTests = true;
 
 		if(runTests) {
 			Dictionary.testCases_Scrabble();
 			Dictionary.testCases_Simple();
+			Dictionary.testCases_Iterator();
 		}
 		else {
 			Dictionary dictionary = new Dictionary();
@@ -394,7 +503,12 @@ public class Dictionary {
 			for(Word.Part_Of_Speech pos : posSet) {
 				System.out.println(pos);
 			}
-
+			
+			Dictionary simple = new Dictionary();
+			DictionaryLoadUtils.loadFromZyzzyva(simple,Path.of("./test/dictionaries","small_no_definitions.txt"), false);
+			for(Word w : simple) {
+				System.out.println(w);
+			}
 		}
 	}
 
@@ -442,5 +556,72 @@ public class Dictionary {
 		dictionary.printAll();
 		System.out.println(dictionary.getSize());
 		assert (dictionary.getSize() == 13) : "Failed dictionary size test after word removal";
+		
+	}
+	
+	private static void testCases_Iterator() {
+		// TEST 1 - Add some 'words' to a dictionary and verify that the iterator gets them all and in the correct order
+		Dictionary testDictionary = new Dictionary();
+		String[] testWords = {
+			"ZA",
+			"A",
+			"AAA",
+			"AA",
+			"BA",
+			"AB"
+		};
+		int[] testWordOrder = {
+			1,
+			3,
+			2,
+			5,
+			4,
+			0
+		};
+		for(String word : testWords) {
+			testDictionary.addWord(word);
+		}
+		Iterator<Word> wordIter = testDictionary.iterator();
+		int i = 0;
+		while(wordIter.hasNext()) {
+			String testWord = testWords[testWordOrder[i++]];
+			String iterWord = wordIter.next().getLetters();
+			System.out.println(iterWord);
+			assert(testWord.equals(iterWord)) : "Next word should be '" + testWord + "' but found '" + iterWord + "'";
+		}
+		
+		//TEST 2 - next() should throw a NoSuchElementException if called when there are no more words. Try on an empty dictionary
+		Dictionary emptyDictionary = new Dictionary();
+		wordIter = emptyDictionary.iterator();
+		String catchFailure = "Unknown Problem";
+		try {
+			wordIter.next();
+			catchFailure = "No Exception Thrown";
+		}
+		catch(NoSuchElementException nse) {
+			catchFailure = "";
+		}
+		catch(Exception e) {
+			catchFailure = "Threw Other Exception";
+		}
+		assert(catchFailure.isEmpty()) : "Tried calling next() on an empty dictionary, expected a NoSuchElementException, instead got '" + catchFailure + "'";
+		
+		//TEST 3 - next() should throw a NoSuchElementException if called when there are no more words. Try on a dictionary with some words in it
+		wordIter = testDictionary.iterator();
+		catchFailure = "Unknown Problem";
+		try {
+			for(int idx=0; idx<testDictionary.getSize(); idx++) {
+				wordIter.next();
+			}
+			wordIter.next();
+			catchFailure = "No Exception Thrown";
+		}
+		catch(NoSuchElementException nse) {
+			catchFailure = "";
+		}
+		catch(Exception e) {
+			catchFailure = "Threw Other Exception";
+		}
+		assert(catchFailure.isEmpty()) : "Tried calling next() more times than there are words in the dictionary, expected a NoSuchElementException, instead got '" + catchFailure + "'";
 	}
 }

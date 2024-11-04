@@ -13,7 +13,7 @@ replay_pid*
 ##############################
 ## Eclipse
 ##############################
-#.project
+.project
 .settings/
 bin/
 tmp/
