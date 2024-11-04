@@ -3,6 +3,7 @@ package com.augursolutions.wordler;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Word {
 
 	public enum Part_Of_Speech {
@@ -73,6 +74,7 @@ public class Word {
 	public void setPartsOfSpeech(List<Part_Of_Speech> partsOfSpeech) {
 		this.partsOfSpeech = partsOfSpeech;
 	}
+	
 	//CONVERSION TO CHAR[]
 	public char[] toChars() {
 		if(this.letters == null || this.letters.isEmpty())
@@ -81,9 +83,18 @@ public class Word {
 		this.letters.getChars(0, this.letters.length(), chars, 0);
 		return chars;
 	}
+	
 	public int length() {
 		if(this.letters == null)
 			return 0;
 		return this.letters.length();
+	}
+	
+	public String toString() {
+		return this.getLetters() == null ? "" : this.getLetters();
+	}
+	
+	public int compare(Word w1, Word w2) {
+		return w1.getLetters().compareTo(w2.getLetters());
 	}
 }
