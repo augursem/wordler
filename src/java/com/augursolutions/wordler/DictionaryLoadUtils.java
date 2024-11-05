@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,8 +21,6 @@ public final class DictionaryLoadUtils {
 
 	// private constructor - all methods are static
 	private DictionaryLoadUtils() {};
-
-	private static final ArrayList<Part_Of_Speech> undefinedPartOfSpeech = new ArrayList<>(Arrays.asList(Part_Of_Speech.UNDEFINED));
 	
 	/**
 	 * Populate a {@link Dictionary} by reading in a text file where each line
