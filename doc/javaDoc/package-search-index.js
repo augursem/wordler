@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"com.augursolutions.wordler","l":"com.augursolutions.wordler"}];updateSearchResults();

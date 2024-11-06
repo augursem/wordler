@@ -116,13 +116,12 @@ public class DictionaryFilter {
 	}
 	
 	/**
-	 * Takes a {@link Filter} object and returns a {@link Dictionary} object
-	 * which only contains words that meet the {@link Filter} criteria
+	 * Takes a {@link DictionaryFilter} object and returns a {@link Dictionary} object
+	 * which only contains words that meet the {@link DictionaryFilter} criteria
 	 * 
-	 * @param filter A {@link Filter} object to apply to this {@link Dictionary}
-	 * @return A {@link Dictionary} object with only words that meet the {@link Filter}
+	 * @param dictionary The {@link Dictionary} object to apply this {@link DictionaryFilter} to.
+	 * @return A {@link Dictionary} object with only words that meet the {@link DictionaryFilter}
 	 *         criteria
-	 * @since 1.0
 	 */
 	public Dictionary applyTo(Dictionary dictionary) {
 		Dictionary filteredDictionary = new Dictionary();

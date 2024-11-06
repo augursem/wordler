@@ -19,7 +19,6 @@ import java.util.TreeMap;
  * <p>
  * As an example, consider a Dictionary object with the words "AT", "BE", "BED", and "BEST". The associated tree
  * would look like the image below, with (R) indicating the root node and (E) indicating nodes that mark the end of a word.
- * <p>
  * <pre>
  *     A-T-(E)
  *    /
@@ -95,7 +94,8 @@ public class SimpleDictionary {
 	
 	/**
 	 * Add a word to the dictionary
-	 * @param args
+	 * @param word Word to add
+	 * @return true If the word is added successfully (false if it already exists or if {@code word} is null or empty)
 	 */
 	public boolean addWord(String word) {
 		if(word == null || word.isEmpty()) {
@@ -166,7 +166,10 @@ public class SimpleDictionary {
 			currentChar = currentNode.letter;
 		}
 	}
-	
+
+	/**
+	 * Print all words to the console
+	 */
 	public void printAll() {
 		this.printAll(this.rootNode);
 	}
