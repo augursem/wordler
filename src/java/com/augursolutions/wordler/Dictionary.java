@@ -9,14 +9,13 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
  * 
- * Dictionary implemented as an M-ary tree. All letters are stored in upper-case, so that
+ * Dictionary implemented as an M-ary tree with Word objects attached to each WORD_ENDING node. All letters are stored in upper-case, so that
  * {@code Dicionary.add("foo")} and {@code Dicionary.add("FOO")} are equivalent. Only letters are allowed.
- * <p>
+  <p>
  * Each node in the tree is one letter in one or more words, with the ASCII `start of text` value (02)
  * used for the root node and the `end of text` value (03) used for nodes that indicate the end of a word. 
  * Note that each node can have at most 27 children (A-Z and `end of text`). The children for each node are stored
@@ -24,7 +23,6 @@ import java.util.TreeMap;
  * <p>
  * As an example, consider a Dictionary object with the words "AT", "BE", "BED", and "BEST". The associated tree
  * would look like the image below, with (R) indicating the root node and (E) indicating nodes that mark the end of a word.
- * <p>
  * <pre>
  *     A-T-(E)
  *    /
@@ -55,29 +53,6 @@ public class Dictionary implements Iterable<Word> {
 		rootNode = new DictionaryNode(DictionaryNode.ROOT_NODE);
 	}
 	
-	public Dictionary(String word) {
-		this();
-		this.addWord(word);
-	}
-
-	public Dictionary(String[] words) {
-		this();
-		if(words == null)
-			return;
-		for(String word : words) {
-			this.addWord(word);
-		}
-	}
-	
-	public Dictionary(Set<String> words) {
-		this();
-		if(words == null)
-			return;
-		for(String word : words) {
-			this.addWord(word);
-		}
-	}
-	
 	/**
 	 * Gets the number of words in the dictionary (specifically the number of nodes
 	 * whose letter is DictionaryNode.WORD_ENDING
@@ -98,6 +73,10 @@ public class Dictionary implements Iterable<Word> {
 		return this.rootNode;
 	}
 	
+	/**
+	 * Sets the random seed for the {@link #getRandomWord()} and {@link #getRandomWord(Word[])} methods
+	 * @param seed Any {@code int} is valid
+	 */
 	public void setSeed(int seed) {
 		this.rand = new Random(seed);
 	}
@@ -108,7 +87,6 @@ public class Dictionary implements Iterable<Word> {
 		}
 		return this.rand;
 	}
-	
     
 	/**
 	 * Get the {@link DictionaryNode} associated with a word fragment. For example, if the word "DOG" is in the
@@ -175,6 +153,7 @@ public class Dictionary implements Iterable<Word> {
 	 * Add a word to the {@link Dictionary}; the {@link Dictionary} object is 
 	 * modified in the process.
 	 * @param word Word to be added to the {@link Dictionary}
+	 * @return true if the Word is added (false if the word already exists or if {@code word} is null or otherwise invalid)
 	 */
 	public boolean addWord(Word word) {
 		if(word == null || word.getLetters() == null || word.getLetters().isEmpty())
@@ -593,7 +572,8 @@ public class Dictionary implements Iterable<Word> {
 	 * Tests on small test dictionary
 	 */
 	private static void testCases_Simple() {
-		
+
+		System.out.println("testCases_Simple: running ...");
 		Dictionary dictionary = new Dictionary();
 		DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of("./test/dictionaries","small_no_definitions.txt"), false);
 		
@@ -615,10 +595,12 @@ public class Dictionary implements Iterable<Word> {
 		dictionary.printAll();
 		System.out.println(dictionary.getSize());
 		assert (dictionary.getSize() == 13) : "Failed dictionary size test after word removal";
+		System.out.println("testCases_Simple: PASSED");
 		
 	}
 	
 	private static void testCases_Iterator() {
+		System.out.println("testCases_Iterator: running ...");
 		// TEST 1 - Add some 'words' to a dictionary and verify that the iterator gets them all and in the correct order
 		Dictionary testDictionary = new Dictionary();
 		String[] testWords = {
@@ -682,9 +664,12 @@ public class Dictionary implements Iterable<Word> {
 			catchFailure = "Threw Other Exception";
 		}
 		assert(catchFailure.isEmpty()) : "Tried calling next() more times than there are words in the dictionary, expected a NoSuchElementException, instead got '" + catchFailure + "'";
+		
+		System.out.println("testCases_Iterator: PASSED");
 	}
 	
 	private static void testCases_Random() {
+		System.out.println("testCases_Random: running ...");
 		// TEST 1 - Create a Dictionary with some words and randomly draw from it repeatedly. Verify that each word is hit
 		// (roughly) the same number of times (number_of_draws/number_of_words +/- some error)
 		Dictionary d = new Dictionary();
@@ -732,6 +717,6 @@ public class Dictionary implements Iterable<Word> {
 			int count = wordCounts.get(w);
 			assert( count > p_lower && count < p_upper ) : "getRandomWord(lookupTable) Test: Word '" +  w + "' appeared " + count + " times, limits were: (" + p_lower + " , " + p_upper + ")";
 		}
-	
+		System.out.println("testCases_Random: PASSED");
 	}
 }

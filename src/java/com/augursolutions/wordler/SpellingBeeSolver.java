@@ -46,12 +46,16 @@ public class SpellingBeeSolver {
 	
 	public SpellingBeeSolver() {};
 	
+	/**
+	 * Assigns the {@link Dictionary} that will be used to generate all solutions
+	 * @param d A {@link Dictionary} with all words to get solutions from ({@code allAnswers} will be a subset of this dictionary)
+	 */
 	public void setDictionary(Dictionary d) {
 	  this.dictionary = d;	
 	}
 	
 	/**
-	 * Get the associated {@link Dictionary} object - initializes an empty {@link Dictio9nary} if one has not been set.
+	 * Get the associated {@link Dictionary} object - initializes an empty {@link Dictionary} if one has not been set.
 	 * @return The {@link Dictionary} object associated with the solver
 	 */
 	public Dictionary getDictionary() {
@@ -62,8 +66,8 @@ public class SpellingBeeSolver {
 	}
 	
 	/**
-	 * Determine if a non-empty {@link Dictionary has been set
-	 * @return {@code true} if the {@link DIctionary} object is not null and not empty
+	 * Determine if a non-empty {@link Dictionary} has been set
+	 * @return {@code true} if the {@link Dictionary} object is not null and not empty
 	 */
 	public boolean hasValidDictionary() {
 		return (this.getDictionary() != null && this.getDictionary().getSize() > 0);
@@ -88,6 +92,10 @@ public class SpellingBeeSolver {
 		this.requiredLetter=r;
 	}
 	
+	/**
+	 * Get the {@code requiredLetter} field
+	 * @return The {@code requiredLetter} field
+	 */
 	public String getRequiredLetter( ) {
 		return this.requiredLetter;
 	}
@@ -106,6 +114,9 @@ public class SpellingBeeSolver {
 				this.requiredLetter.toUpperCase().charAt(0) <= 'Z');
 	}
 	
+	/**
+	 * @param p A {@link String} with 6 unique characters - performs validation on the input.
+	 */
 	public void setPossibleLetters(String p) {
 		if(p == null || p.isEmpty() || p.length() != 6) {
 			System.out.println("ERROR: setPossibleLetters() takes a String with " + N_POSSIBLE_LETTERS + " characters, value provided was: " + p);
@@ -128,6 +139,9 @@ public class SpellingBeeSolver {
 		this.possibleLetters = p;
 	}
 	
+	/**
+	 * @return The {@code possibleLetters} field - may be null
+	 */
 	public String getPossibleLetters() {
 		return this.possibleLetters;
 	}
@@ -217,20 +231,27 @@ public class SpellingBeeSolver {
 		private Map<Integer, ArrayList<Word>> answersByLength;
 		private Dictionary allAnswers;
 		
+		/**
+		 * Initialize an empty SpellingBeeSolution object
+		 */
 		public SpellingBeeSolution() {
+			this.allAnswers = new Dictionary();
 			this.pangrams = new ArrayList<>();
 			this.answersByLength = this.getAnswersByLength();
 		}
 		
-		public SpellingBeeSolution(Dictionary d) {
-			this();
-			this.setAllAnswers(d);
-		}
-		
+		/**
+		 * Assign a {@link Dictionary} object as the set of all answers
+		 * @param d {@link Dictionary} object with answers
+		 */
 		public void setAllAnswers(Dictionary d) {
 			this.allAnswers = d;
 		}
 		
+		/**
+		 * Returns the {@link Dictionary} object with all answers
+		 * @return {@link Dictionary} object with all answers
+		 */
 		public Dictionary getAllAnswers() {
 			if(this.allAnswers == null) {
 				this.allAnswers = new Dictionary();
@@ -238,10 +259,19 @@ public class SpellingBeeSolver {
 			return this.allAnswers;
 		}
 		
+		/**
+		 * Add a {@link Word} to the list of pangrams. Note that there is no check here 
+		 * that the word is included in the {@code allAnswers} dictionary
+		 * @param w {@link Word} to add to the list of pangrams
+		 */
 		public void addPangram(Word w) {
 			this.getPangrams().add(w);
 		}
 		
+		/**
+		 * Return the {@code pangrams} object - initializes the list if it is null
+		 * @return The {@code pangrams} field - {@link ArrayList}&lt;{@link Word}&gt; of solutions that use all letters
+		 */
 		public List<Word> getPangrams() {
 			if(this.pangrams == null) {
 				this.pangrams = new ArrayList<>();
@@ -251,6 +281,7 @@ public class SpellingBeeSolver {
 		
 		/**
 		 * Takes a {@link Word} object and stores it in {@code answersByLength} based on its length
+		 * Note that there is no check that the word is included in the {@code allAnswers} dictionary
 		 * @param w {@link Word} to store
 		 */
 		public void addAnswerByLength(Word w) {
@@ -328,13 +359,36 @@ public class SpellingBeeSolver {
 		}
 	}
 
+	/**
+	 * Generate solutions to a NYT Spelling Bee puzzle
+	 * @param args: <br>
+	 *   1: requiredLetter - the single yellow letter that all solutions must use
+	 *   2: possibleLetters - the six white letters that solutions may use
+	 *   3: dictionary to use, default is "./test/dictionaries/NWL2023.txt"
+	 */
 	public static void main(String[] args) {
+		// Default dictionary
+		String dictionarypath = "./test/dictionaries/NWL2023.txt";
+		String requiredLetter = "";
+		String possibleLetters = "";
+		if(args.length < 2) {
+			System.out.println("ERROR: at least two arguments are required: requiredLetter and possibleLetters.");
+			return;
+		}
+		requiredLetter = args[0];
+		possibleLetters = args[1];
+		if(args.length == 3) {
+			dictionarypath = args[2];
+		}
+		if(args.length > 3) {
+			System.out.println("WARNING: Only 3 arguments are accepted - additional arguments are ignored.");
+		}
 		Dictionary dictionary = new Dictionary();
-		DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of("./test/dictionaries","NWL2023.txt"), true);
+		DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of(dictionarypath), true);
 		SpellingBeeSolver slvr = new SpellingBeeSolver();
 		slvr.setDictionary(dictionary);
-		slvr.setPossibleLetters("PHANTO");
-		slvr.setRequiredLetter("M");
+		slvr.setPossibleLetters(possibleLetters);
+		slvr.setRequiredLetter(requiredLetter);
 		SpellingBeeSolution sln = slvr.solve();
 		sln.prettyPrint();
 	}
