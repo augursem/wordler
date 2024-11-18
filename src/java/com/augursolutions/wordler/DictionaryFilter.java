@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.augursolutions.wordler.Dictionary.DictionaryNode;
+import com.augursolutions.wordler.HashDictionary.HashDictionaryNode;
 
 /**
  * 
@@ -116,15 +116,15 @@ public class DictionaryFilter {
 	}
 	
 	/**
-	 * Takes a {@link DictionaryFilter} object and returns a {@link Dictionary} object
+	 * Takes a {@link DictionaryFilter} object and returns a {@link LanguageDictionary} object
 	 * which only contains words that meet the {@link DictionaryFilter} criteria
 	 * 
-	 * @param dictionary The {@link Dictionary} object to apply this {@link DictionaryFilter} to.
-	 * @return A {@link Dictionary} object with only words that meet the {@link DictionaryFilter}
+	 * @param dictionary The {@link LanguageDictionary} object to apply this {@link DictionaryFilter} to.
+	 * @return A {@link LanguageDictionary} object with only words that meet the {@link DictionaryFilter}
 	 *         criteria
 	 */
-	public Dictionary applyTo(Dictionary dictionary) {
-		Dictionary filteredDictionary = new Dictionary();
+	public LanguageDictionary applyTo(LanguageDictionary dictionary) {
+		LanguageDictionary filteredDictionary = new LanguageDictionary();
 		applyTo(dictionary.getRootNode(), filteredDictionary);
 		return filteredDictionary;
 	}
@@ -133,10 +133,10 @@ public class DictionaryFilter {
 	 * Recursive implementation of the {@link #applyFilter(Filter)} method
 	 * used internally in recursion
 	 * @param filter - The {@link Filter} being applied
-	 * @param node - current node in the {@link Dictionary} tree
-	 * @param filteredDictionary - The filtered {@link Dictionary} object that is being constructed
+	 * @param node - current node in the {@link LanguageDictionary} tree
+	 * @param filteredDictionary - The filtered {@link LanguageDictionary} object that is being constructed
 	 */
-	private void applyTo(DictionaryNode node, Dictionary filteredDictionary)
+	private void applyTo(HashDictionaryNode node, LanguageDictionary filteredDictionary)
 	{
 		if(node == null || node.getChildren() == null || node.getChildren().isEmpty())
 			return;
@@ -150,11 +150,11 @@ public class DictionaryFilter {
 			return;
 		}
 		
-		for (Map.Entry<Character, DictionaryNode> entry : node.getChildren().entrySet()) {
-    		DictionaryNode currentChildNode = entry.getValue();
+		for (Map.Entry<Character, HashDictionaryNode> entry : node.getChildren().entrySet()) {
+			HashDictionaryNode currentChildNode = entry.getValue();
     		
     		// WORD_ENDING node
-	    	if(currentChildNode.getLetter() == DictionaryNode.WORD_ENDING) {
+	    	if(currentChildNode.getLetter() == HashDictionaryNode.WORD_ENDING) {
 	    		// Apply wordSizeMin:
 	    		// Only add word if it meets wordSizeMin requirement
 	    		if(!this.hasWordSizeMin() || wordFragment.length() >= this.getWordSizeMin()) {
@@ -165,7 +165,7 @@ public class DictionaryFilter {
 		    			addWord = wordContainsRequiredLetters(wordFragment, this.getRequiredLetters());
 		    		}
 		    		if(addWord)
-		    			filteredDictionary.addWord(wordFragment);
+		    			filteredDictionary.add(wordFragment);
 	    		}
 	    	}
 	    	// Regular character node

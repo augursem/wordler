@@ -1,5 +1,6 @@
 package com.augursolutions.wordler;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +9,10 @@ import java.util.List;
  * @author Steven Major
  *
  */
-public class Word {
+public class Word implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * Parts of speech:<br>
 	 * {@link #ACRONYM} <br>
