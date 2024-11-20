@@ -79,6 +79,14 @@ would look like the image below, with (R) indicating the root node and (E) indic
 ### TreeSetLanguageDictionary
 Similar to the `TreeMapDictionary` class, with the addition of having each word ending node linked to a Word object so that definitions and parts of speech can be stored.
 
+## Filtering
+Filtering is currently only implemented for `Dictionary` classes that extend the `HashMapDictioanry` class, namely:
+ - `HashM<apDictionary`
+ - `TreeMapDictionary`
+ - `TreeMapLanguageDictionary`
+
+It is my intention to make filtering work across all classes and to include filtering in perforance testing.
+
 ## Random Word generation
 There are two ways to generate random words:
 1. By calling `getRandomWord()` 
