@@ -80,8 +80,8 @@ would look like the image below, with (R) indicating the root node and (E) indic
 Similar to the `TreeMapDictionary` class, with the addition of having each word ending node linked to a Word object so that definitions and parts of speech can be stored.
 
 ## Filtering
-Filtering is currently only implemented for `Dictionary` classes that extend the `HashMapDictioanry` class, namely:
- - `HashM<apDictionary`
+Filtering is currently only implemented for `Dictionary` classes that extend the `HashMapDictionary` class, namely:
+ - `HashMapDictionary`
  - `TreeMapDictionary`
  - `TreeMapLanguageDictionary`
 
