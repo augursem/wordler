@@ -6,7 +6,7 @@ solution is essentially just a filter applied to a dictionary with some formatte
 
 The main goal is play with the idea of a best solution strategy for the NYT Wordle puzzle, which is essentially a word-based version of the classic game "Mastermind". Because this is a personal project
 that I am working on because I enjoy working on it, detours (I suspect several) will be taken along the way. The current detour I find myself on is an investigation into how to best design a `Dictionary` class. 
-For a discussion on this, see the [discussion about the myriad `Dictionary` classes][#why-are-there-so-many-dictionary-classes?]
+For a discussion on this, see the [discussion about the myriad `Dictionary` classes](#why-are-there-so-many-dictionary-classes?)
 
 # Documentation
 Documentation (beyond this file) is located in the doc folder and is currently the javadoc generated as html.
@@ -43,7 +43,7 @@ Once I had it working, I stopped and asked myself the following questions:
 2. What benefits (if any) does the M-ary Tree approach provide vs something simpler, e.g. just storing every word in a TreeSet?
 3. How much memory do the different implementation options use?
 4. How easy is it to implement filtering for these different classes? In which implementation is filtering words based on length and position of letters most efficient?
-In order to answer these questions, I made the `Dictionary` class abstract and created six extensions of it. See the [Performance Tests][#performance-tests] section for answers to the above questions
+In order to answer these questions, I made the `Dictionary` class abstract and created six extensions of it. See the [Performance Tests](#performance-tests) section for answers to the above questions
 5. What kind of performance gains do I get by abandoning alphabetical ordering (i.e. use a `HashMap`/`HashSet` instead of a `TreeMap`/`TreeSet`)?
 
 ### Dictionary (Abstract Class)
@@ -118,15 +118,15 @@ the dictionary was loaded from a text file with approximately 200,000 words 100 
 | TreeMapLanguageDictionary | 29.1853386 s              |
 
 ## Word Lookup Times
-Timing for checking the presence of a word (calling `contains`) was tested for short (2-4 letters), medium (5-8 letters) and long +
-(9+ letters, including an 18 letter word). Each list of words was itterated through 10,000,000 times 
+Timing for checking the presence of a word (calling `contains`) was tested for short (2-4 letters), medium (5-8 letters) and long 
+(9+ letters, including an 18 letter word). Each list of words was iterated through 10,000,000 times, meaning if a list contained 5 words, 
+`contains()` was called on each word 2,000,000 times.
 
 **SUMMARY**: The `HashSetDictionary` is universally fastest. For smaller words, the `TreeMapDictionary` outperforms `TreeSetDictionary`, which means that 
 for an option that returns results alphabetically, this is the fastes look-up option for small words. The M-ary tree design performs worse as words get longer 
 relative to the `HashSet`/`TreeSet` implementations. 
 
-| # Short Words |
-| ------------------------------------------------------------ |
+### Short Words 
 | Dictionary Class          | Time To Lookup  10,000,000 Words |
 | ------------------------- | -------------------------------- |
 | HashSetDictionary         |  0.0960700 s                     |
@@ -136,8 +136,7 @@ relative to the `HashSet`/`TreeSet` implementations.
 | TreeSetDictionary         |  0.6648884 s                     |
 | TreeMapLanguageDictionary |  0.5718636 s                     |
 
-| # Medium Words |
-| ------------------------------------------------------------ |
+### Medium Words
 | Dictionary Class          | Time To Lookup  10,000,000 Words |
 | ------------------------- | -------------------------------- |
 | HashSetDictionary         |  0.1215837 s                     |
@@ -147,8 +146,7 @@ relative to the `HashSet`/`TreeSet` implementations.
 | TreeMapDictionary         |  0.9454727 s                     |
 | TreeMapLanguageDictionary |  1.0859602 s                     |
 
-| # Long Words |
-| ------------------------------------------------------------ |
+# Long Words
 | Dictionary Class          | Time To Lookup  10,000,000 Words |
 | ------------------------- | -------------------------------- |
 | HashSetDictionary         |  0.1212057 s                     |
