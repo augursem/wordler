@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import com.augursolutions.wordler.Word.Part_Of_Speech;
 
 /**
- * Utility class with methods for populating a {@link Dictionary} object from external sources
+ * Utility class with methods for populating a {@link TreeMapLanguageDictionary} object from external sources
  * 
  * @author Steven Major
  *
@@ -23,18 +23,16 @@ public final class DictionaryLoadUtils {
 	private DictionaryLoadUtils() {};
 	
 	/**
-	 * Populate a {@link Dictionary} by reading in a text file where each line
+	 * Populate a {@link TreeMapLanguageDictionary} by reading in a text file where each line
 	 * contains a word followed by a definition. Intended for use with the 
 	 * text file dictionaries in the <b><i>data/words/&lt;region&gt;</i></b> folder
 	 * of a <b><i>Zyzzyva</i></b> installation. Any text file with one word per line
 	 * can be loaded with this method. Definitions do not need to be present
 	 * @param dictionaryFile {@link Path} to the text file with words
 	 *        and definitions.
-	 * @param loadDefinitions If true, definitions are also read in along with part
-	 * of speech. 
 	 * @return A dictionary object with all words  from the specified text file
 	 */
-	public static final boolean loadFromZyzzyva(Dictionary dictionary, Path dictionaryFile, boolean loadDefinitions) {	
+	public static final <T extends Dictionary> boolean loadFromZyzzyva(T dictionary, Path dictionaryFile) {	
 		File wordList = null;
 		try {
 			wordList = dictionaryFile.toFile();
@@ -59,21 +57,25 @@ public final class DictionaryLoadUtils {
 				String word = spaceIndex == -1 ? line : line.substring(0, line.indexOf(' '));
 				if(spaceIndex > -1 && line.length() > spaceIndex)
 					definitionEntry = line.substring(spaceIndex+1);
-				
-				if(definitionEntry != null && !definitionEntry.isBlank()) {
-					// Definitions have the following format:
-					// - homographs (same spelling, different word) are separated by " / "
-					// - part of speech occurs at the end of the definition and appears in square brackets, followed by conjugations/pluralization
-					// - related words follow the part of speech and are preceded by " : ", e.g. the word "WORK" (verb) might have " : WORKER [n]"
-					// e.g. DIM {obscure=adj} [adj DIMMER, DIMMEST] : DIMLY [adv], DIMMISH [adj], DIMNESS [n] / to make dim [v DIMMED, DIMMING, DIMS] : DIMMABLE [adj]
-					String[] allDefs = definitionEntry.split(" / ");
-					for(String def : allDefs) {
-						definitions.add(def);
-						partsOfSpeech.add(getPartOfSpeechFromZyzzyva(def));
-					}
+				// For TreeMapLanguageDictionary, add a Word objectw ith definitions and parts of speech
+				if(dictionary instanceof TreeMapLanguageDictionary) {
+					if(definitionEntry != null && !definitionEntry.isBlank()) {
+						// Definitions have the following format:
+						// - homographs (same spelling, different word) are separated by " / "
+						// - part of speech occurs at the end of the definition and appears in square brackets, followed by conjugations/pluralization
+						// - related words follow the part of speech and are preceded by " : ", e.g. the word "WORK" (verb) might have " : WORKER [n]"
+						// e.g. DIM {obscure=adj} [adj DIMMER, DIMMEST] : DIMLY [adv], DIMMISH [adj], DIMNESS [n] / to make dim [v DIMMED, DIMMING, DIMS] : DIMMABLE [adj]
+						String[] allDefs = definitionEntry.split(" / ");
+						for(String def : allDefs) {
+							definitions.add(def);
+							partsOfSpeech.add(getPartOfSpeechFromZyzzyva(def));
+						}
 
+					}
+					((TreeMapLanguageDictionary)dictionary).add(new Word(word,definitions,partsOfSpeech));
+				} else {
+					dictionary.add(word);
 				}
-				dictionary.addWord(new Word(word,definitions,partsOfSpeech));
 			} 
 		} 
 		catch(Exception e) {

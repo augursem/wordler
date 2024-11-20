@@ -31,7 +31,7 @@ import java.util.TreeMap;
  *  ...
  * </pre>
  * <p>
- * <b>NOTE:</b> The solutions are correct to the extent that the {@link Dictionary} object
+ * <b>NOTE:</b> The solutions are correct to the extent that the {@link TreeMapLanguageDictionary} object
  * used to generate them matches the dictionary used by the <b>NYT Spelling Bee</b>
  * 
  * 
@@ -42,32 +42,32 @@ public class SpellingBeeSolver {
 	private static final int N_POSSIBLE_LETTERS = 6;
 	private String requiredLetter;
 	private String possibleLetters;
-	private Dictionary dictionary;
+	private TreeMapLanguageDictionary dictionary;
 	
 	public SpellingBeeSolver() {};
 	
 	/**
-	 * Assigns the {@link Dictionary} that will be used to generate all solutions
-	 * @param d A {@link Dictionary} with all words to get solutions from ({@code allAnswers} will be a subset of this dictionary)
+	 * Assigns the {@link TreeMapLanguageDictionary} that will be used to generate all solutions
+	 * @param d A {@link TreeMapLanguageDictionary} with all words to get solutions from ({@code allAnswers} will be a subset of this dictionary)
 	 */
-	public void setDictionary(Dictionary d) {
+	public void setDictionary(TreeMapLanguageDictionary d) {
 	  this.dictionary = d;	
 	}
 	
 	/**
-	 * Get the associated {@link Dictionary} object - initializes an empty {@link Dictionary} if one has not been set.
-	 * @return The {@link Dictionary} object associated with the solver
+	 * Get the associated {@link TreeMapLanguageDictionary} object - initializes an empty {@link TreeMapLanguageDictionary} if one has not been set.
+	 * @return The {@link TreeMapLanguageDictionary} object associated with the solver
 	 */
-	public Dictionary getDictionary() {
+	public TreeMapLanguageDictionary getDictionary() {
 		if(this.dictionary == null) {
-			this.dictionary = new Dictionary();
+			this.dictionary = new TreeMapLanguageDictionary();
 		}
 		return this.dictionary;
 	}
 	
 	/**
-	 * Determine if a non-empty {@link Dictionary} has been set
-	 * @return {@code true} if the {@link Dictionary} object is not null and not empty
+	 * Determine if a non-empty {@link TreeMapLanguageDictionary} has been set
+	 * @return {@code true} if the {@link TreeMapLanguageDictionary} object is not null and not empty
 	 */
 	public boolean hasValidDictionary() {
 		return (this.getDictionary() != null && this.getDictionary().getSize() > 0);
@@ -168,8 +168,8 @@ public class SpellingBeeSolver {
 	}
 	
 	/**
-	 * Verifies that there is a valid {@link Dictionary} object and that {@code requiredLetter} and {@code possibleLetters} 
-	 * are set an valid. Then applies a filter to create a new {@link Dictionary} object with words that contain 
+	 * Verifies that there is a valid {@link TreeMapLanguageDictionary} object and that {@code requiredLetter} and {@code possibleLetters} 
+	 * are set an valid. Then applies a filter to create a new {@link TreeMapLanguageDictionary} object with words that contain 
 	 * {@code requiredLetter} and whose only other letters are in {@code possibleLetters}.
 	 * Results are stored in a {@link SpellingBeeSolution} object.
 	 * @return A fully populated {@link SpellingBeeSolution} object.
@@ -195,7 +195,7 @@ public class SpellingBeeSolver {
 		DictionaryFilter filter = new DictionaryFilter();
 	    filter.addRequiredLetters(this.getRequiredLetter());
 	    filter.addPossibleLetters(this.getPossibleLetters());
-	    Dictionary spellingBeeAnswers = filter.applyTo(this.getDictionary());
+	    TreeMapLanguageDictionary spellingBeeAnswers = (TreeMapLanguageDictionary)filter.applyTo(this.getDictionary());
 	    
 	    // Populate the SpellingBeeSolution object
 	    sln.setAllAnswers(spellingBeeAnswers);
@@ -221,7 +221,7 @@ public class SpellingBeeSolver {
 	
 	/**
 	 * Holds the solution set to a Spelling Bee puzzle. Set of all answers is stored
-	 * as a {@link Dictionary} object in {@code allAnsers}. All answers that are pangrams
+	 * as a {@link TreeMapLanguageDictionary} object in {@code allAnsers}. All answers that are pangrams
 	 * (i.e. use all letters in the puzzle) are stored as an {@link ArrayList}&lt;{@link Word}&gt; in 
 	 * {@code pangrams}. Answers are also organized by word length in {@code answersByLength}
 	 * 
@@ -229,32 +229,32 @@ public class SpellingBeeSolver {
 	public static class SpellingBeeSolution {
 		private List<Word> pangrams;
 		private Map<Integer, ArrayList<Word>> answersByLength;
-		private Dictionary allAnswers;
+		private TreeMapLanguageDictionary allAnswers;
 		
 		/**
 		 * Initialize an empty SpellingBeeSolution object
 		 */
 		public SpellingBeeSolution() {
-			this.allAnswers = new Dictionary();
+			this.allAnswers = new TreeMapLanguageDictionary();
 			this.pangrams = new ArrayList<>();
 			this.answersByLength = this.getAnswersByLength();
 		}
 		
 		/**
-		 * Assign a {@link Dictionary} object as the set of all answers
-		 * @param d {@link Dictionary} object with answers
+		 * Assign a {@link TreeMapLanguageDictionary} object as the set of all answers
+		 * @param d {@link TreeMapLanguageDictionary} object with answers
 		 */
-		public void setAllAnswers(Dictionary d) {
+		public void setAllAnswers(TreeMapLanguageDictionary d) {
 			this.allAnswers = d;
 		}
 		
 		/**
-		 * Returns the {@link Dictionary} object with all answers
-		 * @return {@link Dictionary} object with all answers
+		 * Returns the {@link TreeMapLanguageDictionary} object with all answers
+		 * @return {@link TreeMapLanguageDictionary} object with all answers
 		 */
-		public Dictionary getAllAnswers() {
+		public TreeMapLanguageDictionary getAllAnswers() {
 			if(this.allAnswers == null) {
-				this.allAnswers = new Dictionary();
+				this.allAnswers = new TreeMapLanguageDictionary();
 			}
 			return this.allAnswers;
 		}
@@ -383,8 +383,8 @@ public class SpellingBeeSolver {
 		if(args.length > 3) {
 			System.out.println("WARNING: Only 3 arguments are accepted - additional arguments are ignored.");
 		}
-		Dictionary dictionary = new Dictionary();
-		DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of(dictionarypath), true);
+		TreeMapLanguageDictionary dictionary = new TreeMapLanguageDictionary();
+		DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of(dictionarypath));
 		SpellingBeeSolver slvr = new SpellingBeeSolver();
 		slvr.setDictionary(dictionary);
 		slvr.setPossibleLetters(possibleLetters);
