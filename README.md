@@ -62,10 +62,10 @@ node in the tree; in fact every word that starts with "B" will share the same no
 The characters corresponding to the ASCII values 02 and 03 are reserved for the root node of the tree and for word ending nodes respectively. A word ending node indicates that the sequence of letters leading up to that node
 represent a word. 
 
-As an example, consider a Dictionary object with the words "AT", "BE", "BED", and "BEST". The associated tree
+As an example, consider a Dictionary object with the words "ASK", "BE", "BED", and "BEST". The associated tree
 would look like the image below, with (R) indicating the root node and (E) indicating nodes that mark the end of a word.
 ```
-       A-T-(E)
+       A-S-K-(E)
       /
    (R) 
       \
@@ -75,7 +75,8 @@ would look like the image below, with (R) indicating the root node and (E) indic
           \
            S-T-(E)
 ```
-  
+***Note: that 'AS' is not a word in this dictionary since the 'S' in 'ASK' has no word ending child node***
+
 ### TreeSetLanguageDictionary
 Similar to the `TreeMapDictionary` class, with the addition of having each word ending node linked to a Word object so that definitions and parts of speech can be stored.
 
