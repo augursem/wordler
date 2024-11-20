@@ -33,13 +33,13 @@ import java.util.NoSuchElementException;
  * @author Steven Major
  *
  */
-public class HashDictionary extends Dictionary implements Iterable<HashDictionary.HashDictionaryNode> {
+public class HashMapDictionary extends Dictionary {
 
 	private static final long serialVersionUID = 1L;
 	protected HashDictionaryNode rootNode;
 	protected int size;
 	
-	public HashDictionary() {
+	public HashMapDictionary() {
 		this.rootNode = getRootNode();
 		this.size = 0;
 	}
@@ -136,6 +136,13 @@ public class HashDictionary extends Dictionary implements Iterable<HashDictionar
 		}
 		// At the end of the word, check for WORD_ENDING node child
 		return currentNode.endsWord();
+	}
+
+	@Override
+	public Word getWord(String s) {
+	   if(!this.contains(s))
+		   return null;
+	   return new Word(s);
 	}
     
 	/**
@@ -349,8 +356,7 @@ public class HashDictionary extends Dictionary implements Iterable<HashDictionar
 	}
 
 
-    @Override
-    public Iterator<HashDictionaryNode> iterator() {
+    public Iterator<HashDictionaryNode> nodeIterator() {
         return new NodeIterator();
     }
     
@@ -475,6 +481,28 @@ public class HashDictionary extends Dictionary implements Iterable<HashDictionar
     		return null;
     	}
     }
+
+	@Override
+	public Iterator<Word> iterator() {
+		return new WordIterator();
+	}
+	
+    private class WordIterator implements Iterator<Word> {
+    	private Iterator<HashDictionaryNode> iter;
+    	public WordIterator() {
+    		this.iter = nodeIterator();
+    	}
+    	
+		@Override
+		public boolean hasNext() {
+			return this.iter.hasNext();
+		}
+
+		@Override
+		public Word next() {
+			return new Word(this.iter.next().getParent().getWordFragment());
+		}
+    }
     
 	public static void main(String[] args) {
 		ArrayList<String> strings = new ArrayList<>();
@@ -483,14 +511,14 @@ public class HashDictionary extends Dictionary implements Iterable<HashDictionar
 		strings.add("BEST");
 		strings.add("BE");
 		
-		HashDictionary d = new HashDictionary();
+		HashMapDictionary d = new HashMapDictionary();
 		d.addAll(strings);
 		
 		//d.printAll();
 		
 		Map<Integer, Dictionary> dMap = new HashMap<>();
 		dMap.put(1, d);
-		((HashDictionary)dMap.get(1)).printAll();
+		((HashMapDictionary)dMap.get(1)).printAll();
 		
 	}
 

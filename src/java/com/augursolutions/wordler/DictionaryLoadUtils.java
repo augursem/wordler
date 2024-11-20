@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import com.augursolutions.wordler.Word.Part_Of_Speech;
 
 /**
- * Utility class with methods for populating a {@link LanguageDictionary} object from external sources
+ * Utility class with methods for populating a {@link TreeMapLanguageDictionary} object from external sources
  * 
  * @author Steven Major
  *
@@ -23,7 +23,7 @@ public final class DictionaryLoadUtils {
 	private DictionaryLoadUtils() {};
 	
 	/**
-	 * Populate a {@link LanguageDictionary} by reading in a text file where each line
+	 * Populate a {@link TreeMapLanguageDictionary} by reading in a text file where each line
 	 * contains a word followed by a definition. Intended for use with the 
 	 * text file dictionaries in the <b><i>data/words/&lt;region&gt;</i></b> folder
 	 * of a <b><i>Zyzzyva</i></b> installation. Any text file with one word per line
@@ -57,8 +57,8 @@ public final class DictionaryLoadUtils {
 				String word = spaceIndex == -1 ? line : line.substring(0, line.indexOf(' '));
 				if(spaceIndex > -1 && line.length() > spaceIndex)
 					definitionEntry = line.substring(spaceIndex+1);
-				// For LanguageDictionary, add a Word objectw ith definitions and parts of speech
-				if(dictionary instanceof LanguageDictionary) {
+				// For TreeMapLanguageDictionary, add a Word objectw ith definitions and parts of speech
+				if(dictionary instanceof TreeMapLanguageDictionary) {
 					if(definitionEntry != null && !definitionEntry.isBlank()) {
 						// Definitions have the following format:
 						// - homographs (same spelling, different word) are separated by " / "
@@ -72,7 +72,7 @@ public final class DictionaryLoadUtils {
 						}
 
 					}
-					((LanguageDictionary)dictionary).add(new Word(word,definitions,partsOfSpeech));
+					((TreeMapLanguageDictionary)dictionary).add(new Word(word,definitions,partsOfSpeech));
 				} else {
 					dictionary.add(word);
 				}

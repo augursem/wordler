@@ -8,18 +8,18 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 /**
- * Dictionary implementation of {@Link Dictionary} that is very similar to {@link HashDictionary} except
+ * Dictionary implementation of {@Link Dictionary} that is very similar to {@link HashMapDictionary} except
  * that child nodes are stored in a {@link TreeSet} instead of a {@link HashSet}. There is some performance
  * trade-off, but in exchange, elements are sorted alphabetically (according to each character's int value)
  * and the dictionary is {@link Iterable}
  * @author Steven Major
  *
  */
-public class TreeDictionary extends HashDictionary implements Iterable<HashDictionary.HashDictionaryNode> {
+public class TreeMapDictionary extends HashMapDictionary {
 
 	private static final long serialVersionUID = 1L;
 	
-	public TreeDictionary() {
+	public TreeMapDictionary() {
 		this.rootNode = getRootNode();
 	}
 	
@@ -32,8 +32,8 @@ public class TreeDictionary extends HashDictionary implements Iterable<HashDicti
 	
 	public void printAll() {
 
-		for(HashDictionaryNode n : this) {
-			System.out.println(n.getParent().getWordFragment());	
+		for(Word w : this) {
+			System.out.println(w);	
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class TreeDictionary extends HashDictionary implements Iterable<HashDicti
 	 * that stores children in a {@link TreeSet} instead of a {@link HashSet}
 	 * @author Steven Major
 	 */
-	public static class TreeDictionaryNode extends HashDictionary.HashDictionaryNode{
+	public static class TreeDictionaryNode extends HashMapDictionary.HashDictionaryNode{
 
 		private static final long serialVersionUID = 1L;
 		
@@ -77,7 +77,7 @@ public class TreeDictionary extends HashDictionary implements Iterable<HashDicti
 	}
 
     @Override
-    public Iterator<HashDictionaryNode> iterator() {
+    public Iterator<HashDictionaryNode> nodeIterator() {
         return new TreeNodeIterator();
     }
     
@@ -193,7 +193,7 @@ public class TreeDictionary extends HashDictionary implements Iterable<HashDicti
 		strings.add("BEST");
 		strings.add("BE");
 		
-		TreeDictionary d = new TreeDictionary();
+		TreeMapDictionary d = new TreeMapDictionary();
 		d.addAll(strings);
 		
 		d.printAll();

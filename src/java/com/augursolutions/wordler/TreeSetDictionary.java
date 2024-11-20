@@ -9,10 +9,9 @@ import java.util.TreeSet;
  * @author Steven Major
  *
  */
-public class TreeSetDictionary extends Dictionary implements Iterable<String> {
+public class TreeSetDictionary extends Dictionary {
 
 	private static final long serialVersionUID = 1L;
-	protected int size;
 	
 	private TreeSet<String> allWords;
 	
@@ -31,14 +30,12 @@ public class TreeSetDictionary extends Dictionary implements Iterable<String> {
 			return false;
 		}
 		this.allWords.add(word);
-		this.size++;
 		return true;
 	}
 
 	@Override
 	public void remove(String word) {
 		this.allWords.remove(word);
-		this.size--;
 	}
 
 	@Override
@@ -47,9 +44,36 @@ public class TreeSetDictionary extends Dictionary implements Iterable<String> {
 	}
 
 	@Override
-	public Iterator<String> iterator() {
+	public Word getWord(String s) {
+	   if(!this.contains(s))
+		   return null;
+	   return new Word(s);
+	}
+
+	public Iterator<String> stringIterator() {
 		return this.allWords.iterator();
 	}
+    
+	@Override
+	public Iterator<Word> iterator() {
+		return new WordIterator();
+	}
+    private class WordIterator implements Iterator<Word> {
+    	private Iterator<String> iter;
+    	public WordIterator() {
+    		this.iter = stringIterator();
+    	}
+    	
+		@Override
+		public boolean hasNext() {
+			return this.iter.hasNext();
+		}
+
+		@Override
+		public Word next() {
+			return new Word(this.iter.next());
+		}
+    }
 
 	public static void main(String[] args) {
 		ArrayList<String> strings = new ArrayList<>();
@@ -61,7 +85,7 @@ public class TreeSetDictionary extends Dictionary implements Iterable<String> {
 		TreeSetDictionary d = new TreeSetDictionary();
 		d.addAll(strings);
 		
-		for(String w : d) {
+		for(Word w : d) {
 			System.out.println(w);
 		}
 	}

@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.augursolutions.wordler.HashDictionary.HashDictionaryNode;
+import com.augursolutions.wordler.HashMapDictionary.HashDictionaryNode;
 
 /**
  * 
@@ -116,15 +116,15 @@ public class DictionaryFilter {
 	}
 	
 	/**
-	 * Takes a {@link DictionaryFilter} object and returns a {@link LanguageDictionary} object
+	 * Takes a {@link DictionaryFilter} object and returns a {@link TreeMapLanguageDictionary} object
 	 * which only contains words that meet the {@link DictionaryFilter} criteria
 	 * 
-	 * @param dictionary The {@link LanguageDictionary} object to apply this {@link DictionaryFilter} to.
-	 * @return A {@link LanguageDictionary} object with only words that meet the {@link DictionaryFilter}
+	 * @param dictionary The {@link TreeMapLanguageDictionary} object to apply this {@link DictionaryFilter} to.
+	 * @return A {@link TreeMapLanguageDictionary} object with only words that meet the {@link DictionaryFilter}
 	 *         criteria
 	 */
-	public LanguageDictionary applyTo(LanguageDictionary dictionary) {
-		LanguageDictionary filteredDictionary = new LanguageDictionary();
+	public TreeMapLanguageDictionary applyTo(TreeMapLanguageDictionary dictionary) {
+		TreeMapLanguageDictionary filteredDictionary = new TreeMapLanguageDictionary();
 		applyTo(dictionary.getRootNode(), filteredDictionary);
 		return filteredDictionary;
 	}
@@ -133,10 +133,10 @@ public class DictionaryFilter {
 	 * Recursive implementation of the {@link #applyFilter(Filter)} method
 	 * used internally in recursion
 	 * @param filter - The {@link Filter} being applied
-	 * @param node - current node in the {@link LanguageDictionary} tree
-	 * @param filteredDictionary - The filtered {@link LanguageDictionary} object that is being constructed
+	 * @param node - current node in the {@link TreeMapLanguageDictionary} tree
+	 * @param filteredDictionary - The filtered {@link TreeMapLanguageDictionary} object that is being constructed
 	 */
-	private void applyTo(HashDictionaryNode node, LanguageDictionary filteredDictionary)
+	private void applyTo(HashDictionaryNode node, TreeMapLanguageDictionary filteredDictionary)
 	{
 		if(node == null || node.getChildren() == null || node.getChildren().isEmpty())
 			return;

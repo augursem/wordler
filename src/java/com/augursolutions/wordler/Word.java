@@ -119,6 +119,8 @@ public class Word implements Serializable {
 	 * @return the definition field (can be null)
 	 */
 	public List<String> getDefinitions() {
+		if(this.definitions == null)
+			this.definitions = new ArrayList<>();
 		return this.definitions;
 	}
 	/**
@@ -141,6 +143,8 @@ public class Word implements Serializable {
 	 * @return List of {@link Part_Of_Speech} values for this word
 	 */
 	public List<Part_Of_Speech> getPartsOfSpeech() {
+		if(this.partsOfSpeech == null)
+			this.partsOfSpeech = new ArrayList<>();
 		return this.partsOfSpeech;
 	}
 	/**
@@ -174,9 +178,62 @@ public class Word implements Serializable {
 	}
 	
 	/**
-	 * Returns the letters field, or "" if thatfield is null
+	 * Returns the letters field, or "" if that field is null
 	 */
+	@Override
 	public String toString() {
 		return this.getLetters() == null ? "" : this.getLetters();
+	}
+
+	@Override
+	/**
+	 * Two words are the same if they refer to the same object or each of the following is true:
+	 *  - Spelling is the same (case-insensitive)
+	 *  - Definitions are the same cardinality and are the same (lists of definitions don't need to be ordered the same).
+	 *    Note that definitions are compared in a case-sensitive way
+	 *  - Parts of speech are the same cardinality and have the same members (lists may have members in different orders)
+	 */
+	public boolean equals(Object o) {
+	    if (o == this)
+	        return true;
+	    if (!(o instanceof Word))
+	        return false;
+	    Word other = (Word)o;
+	    //Verify same spelling (case insensitive)
+	    if(!this.getLetters().toUpperCase().equals(other.getLetters().toUpperCase()))
+	    	return false;
+	    // verify same definitions
+	    if(this.getDefinitions().size() != other.getDefinitions().size())
+	    	return false;
+	    // Handle edge case where one word has the same definition multiple times by 
+	    // looping over both sets of definitions
+	    for(String def : this.getDefinitions()) {
+	    	if(!other.getDefinitions().contains(def))
+	    		return false;
+	    }
+	    for(String def : other.getDefinitions()) {
+	    	if(!this.getDefinitions().contains(def))
+	    		return false;
+	    }
+	    // verify same parts of speech
+	    if(this.getPartsOfSpeech().size() != other.getPartsOfSpeech().size())
+	    	return false;
+	    // Handle edge case where one word has the same part of speech multiple times by 
+	    // looping over both lists of parts of speech
+	    for(Part_Of_Speech p : this.getPartsOfSpeech()) {
+	    	if(!other.getPartsOfSpeech().contains(p))
+	    		return false;
+	    }
+	    for(Part_Of_Speech p : other.getPartsOfSpeech()) {
+	    	if(!this.getPartsOfSpeech().contains(p))
+	    		return false;
+	    }
+	    // Passed all checks above, so return true;
+	    return true;
+	}
+	
+	@Override
+	public final int hashCode() {
+	    return this.getLetters().hashCode();
 	}
 }

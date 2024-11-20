@@ -14,8 +14,10 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.augursolutions.wordler.*;
 
@@ -29,17 +31,23 @@ public class DictionaryPerformaceTests {
 	static List<Class<? extends Dictionary>> dictionaryClasses = new ArrayList<>();
 	static {
 		dictionaryClasses.add(HashSetDictionary.class);
+		dictionaryClasses.add(HashSetLanguageDictionary.class);
 		dictionaryClasses.add(TreeSetDictionary.class);
-		dictionaryClasses.add(HashDictionary.class);
-		dictionaryClasses.add(TreeDictionary.class);
-		dictionaryClasses.add(LanguageDictionary.class);
+		dictionaryClasses.add(HashMapDictionary.class);
+		dictionaryClasses.add(TreeMapDictionary.class);
+		dictionaryClasses.add(TreeMapLanguageDictionary.class);
 	}
 
 	public static void main(String[] args) {
+		boolean fastRun = (args.length > 0 && args[0].toUpperCase().equals("FAST"));
+		String runMode = fastRun ? "FAST" : "STANDARD (aka SLOW)";
+		System.out.println("Running Tests In " + runMode + " Mode ...");
 		DictionaryPerformaceTests test = new DictionaryPerformaceTests();
-		//test.testLoadTimes(100);
-		//test.testContainsCallTimes(10000000);
-		test.testSerialization();
+		int nLoads         = fastRun ? 2 : 100;
+		int nContainsCalls = fastRun ? 10000 : 10000000;
+		test.testLoadTimes(nLoads);
+		test.testContainsCallTimes(nContainsCalls);
+		test.testSerialization(fastRun);
 	}
 	
 	/**
@@ -55,6 +63,7 @@ public class DictionaryPerformaceTests {
 				try {
 					Dictionary d = (Dictionary)klass.getConstructor().newInstance();
 					DictionaryLoadUtils.loadFromZyzzyva(d,Path.of("./test/dictionaries","NWL2023.txt"));
+					System.out.println(d.getSize());
 				} catch (Exception e) {
 					e.printStackTrace();
 					return;
@@ -70,7 +79,7 @@ public class DictionaryPerformaceTests {
 		};
 		
 		String[] mediumWords = { "ZEBRA", "BANANA", "PNEUMONIA", "CARROT", "SEVERAL", "LENGTHY", "MEDIUM",
-		                         "TROPICAL", "HAZARD", "BUZZARD", "UNDERNEATH"
+		                         "TROPICAL", "HAZARD", "BUZZARD", "UNDERTOW"
 		};
 		
 		String[] longWords = { "XYLOPHONE", "STEGOSAURUS", "REFRIGERATOR", "ANTIDISESTABLISHMENTARIANISM",
@@ -107,8 +116,10 @@ public class DictionaryPerformaceTests {
 		timer.printSplits();
 	}
 	
-	private void testSerialization( ) {
-		try {
+	private void testSerialization(boolean fastRun) {
+		try {			
+			Timer timer = new Timer();
+			timer.mark("Start");
 			File tmpDir = Path.of("test","tmp").toFile();
 			
 			// If tmp already exists, delete its contents
@@ -128,18 +139,32 @@ public class DictionaryPerformaceTests {
 				System.out.println("ERROR: can't create / write to test/tmp");
 				return;
 			}
+			timer.mark("tmp directory cleared and ready");
 			
 			// For each Dictionary class, load in the NWL2023 dictionary and serialize out.
+			Map<String,Dictionary> dMap = new HashMap<>();
 			for(Class<? extends Dictionary> klass :dictionaryClasses) {
 				Dictionary d = (Dictionary)klass.getConstructor().newInstance();
-				DictionaryLoadUtils.loadFromZyzzyva(d,Path.of("./test/dictionaries","NWL2023.txt"));
+				if(fastRun) {
+					DictionaryLoadUtils.loadFromZyzzyva(d,Path.of("./test/dictionaries","small_no_definitions.txt"));
+				} else {
+					DictionaryLoadUtils.loadFromZyzzyva(d,Path.of("./test/dictionaries","NWL2023.txt"));
+				}
+				dMap.put(klass.getSimpleName(), (Dictionary)d);
+			}
+			timer.mark("All Dictionary objects read into memory");
+			
+			for(Class<? extends Dictionary> klass :dictionaryClasses) {
+				Dictionary d = dMap.get(klass.getSimpleName());
 				File dictionaryOut = Path.of(tmpDir.getAbsolutePath(),klass.getSimpleName()+".dctnry").toFile();
 				FileOutputStream fout = new FileOutputStream(dictionaryOut);
 				ObjectOutputStream oos = new ObjectOutputStream(fout);
 				oos.writeObject(d);
 				oos.close();
 				fout.close();
+				timer.mark("Serialized out Dictionary class '" + klass.getSimpleName() + "'");
 			}
+			timer.printSplits();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
