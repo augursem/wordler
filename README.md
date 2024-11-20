@@ -64,6 +64,7 @@ represent a word.
 
 As an example, consider a Dictionary object with the words "AT", "BE", "BED", and "BEST". The associated tree
 would look like the image below, with (R) indicating the root node and (E) indicating nodes that mark the end of a word.
+```
        A-T-(E)
       /
    (R) 
@@ -73,7 +74,8 @@ would look like the image below, with (R) indicating the root node and (E) indic
          E-D-(E)  
           \
            S-T-(E)
-		   
+```
+  
 ### TreeSetLanguageDictionary
 Similar to the `TreeMapDictionary` class, with the addition of having each word ending node linked to a Word object so that definitions and parts of speech can be stored.
 
