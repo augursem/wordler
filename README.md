@@ -11,6 +11,31 @@ For a discussion on this, see the [discussion about the myriad `Dictionary` clas
 # Documentation
 Documentation (beyond this file) is located in the doc folder and is currently the javadoc generated as html.
 
+## SpellingBeeSolver
+The [New York Times Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) is a daily online puzzle that consists of 7 letters. The goal is to find all words that use only those letters, with the caveat that one of 
+the seven letters must be included in every word. The `SpellingBeeSolver` class finds all solutions to the puzzle for a given dictionary. A word that uses every letter in the puzzle is called a *pangram*.
+
+### Sample usage
+```java
+	SpellingBeeSolver slvr = new SpellingBeeSolver();
+	slvr.setDictionary(dictionary);
+	slvr.setPossibleLetters("PHANTO");
+	slvr.setRequiredLetter("M");
+	SpellingBeeSolution sln = slvr.solve();
+	sln.prettyPrint();
+```
+Produces:
+  PANGRAM(S):
+  	PHANTOM
+  
+  WORDS OF LENGTH 9:
+  	MANHATTAN
+  WORDS OF LENGTH 8:
+  	PHOTOMAP
+  WORDS OF LENGTH 7:
+  	MAHATMA
+    ...
+ 
 ## Why Are There So Many Dictionary Classes?
 My initial design had a single `Dictionary` class which is now called `TreeMapLanguageDictionary`. As I was developing this class it was clear to me that there were several other approaches I could have taken. 
 Once I had it working, I stopped and asked myself the following questions:
