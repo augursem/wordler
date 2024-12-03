@@ -1,7 +1,7 @@
 # Overview
 `wordler` is a dictionary creation, filtering and analysis class for solving word puzzles.
 
-This is still very much a work in progress. The main Dictionary class is fully functional and a class for solving the NYT Spelling Bee puzzle, SpellingBeeSolver serves as an initial proof of concept - 
+This is still very much a work in progress. The main Dictionary class is fully functional and a class for solving the NYT Spelling Bee puzzle, [SpellingBeeSolver](#SpellingBeeSolver) serves as an initial proof of concept - 
 solution is essentially just a filter applied to a dictionary with some formatted printing to the console.
 
 The main goal is play with the idea of a best solution strategy for the NYT Wordle puzzle, which is essentially a word-based version of the classic game "Mastermind". Because this is a personal project
@@ -24,7 +24,8 @@ the seven letters must be included in every word. The `SpellingBeeSolver` class 
 	SpellingBeeSolution sln = slvr.solve();
 	sln.prettyPrint();
 ```
-Produces:
+produce the output:
+```
   PANGRAM(S):
   	PHANTOM
   
@@ -35,7 +36,8 @@ Produces:
   WORDS OF LENGTH 7:
   	MAHATMA
     ...
- 
+```
+
 ## Why Are There So Many Dictionary Classes?
 My initial design had a single `Dictionary` class which is now called `TreeMapLanguageDictionary`. As I was developing this class it was clear to me that there were several other approaches I could have taken. 
 Once I had it working, I stopped and asked myself the following questions:
