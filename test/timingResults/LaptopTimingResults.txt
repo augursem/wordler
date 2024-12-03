@@ -1,0 +1,64 @@
+Start
+    AT: 03:14:18.738670700
+Loaded 'TreeSetDictionary' from file 100 times.
+    AT: 03:14:26.091825
+    DURATION: 7s, 353154300ns  (7.3531543 s)
+Loaded 'HashDictionary' from file 100 times.
+    AT: 03:14:33.154853700
+    DURATION: 7s, 63028700ns  (7.0630287 s)
+Loaded 'TreeDictionary' from file 100 times.
+    AT: 03:14:42.593822500
+    DURATION: 9s, 438968800ns  (9.4389688 s)
+Loaded 'LanguageDictionary' from file 100 times.
+    AT: 03:15:10.599899400
+    DURATION: 28s, 6076900ns  (28.0060769 s)
+Start
+    AT: 03:15:10.604898
+Loaded 'TreeSetDictionary
+    AT: 03:15:10.674509500
+    DURATION: 0s, 69611500ns  (0.0696115 s)
+Called 'contains' using SHORT words against 'TreeSetDictionary'  10000000 times.
+    AT: 03:15:11.234216700
+    DURATION: 0s, 559707200ns  (0.5597072 s)
+Called 'contains' using MEDIUM words against 'TreeSetDictionary'  10000000 times.
+    AT: 03:15:12.075000200
+    DURATION: 0s, 840783500ns  (0.8407835 s)
+Called 'contains' using LONG words against 'TreeSetDictionary'  10000000 times.
+    AT: 03:15:12.997835800
+    DURATION: 0s, 922835600ns  (0.9228356 s)
+Loaded 'HashDictionary
+    AT: 03:15:13.076465200
+    DURATION: 0s, 78629400ns  (0.0786294 s)
+Called 'contains' using SHORT words against 'HashDictionary'  10000000 times.
+    AT: 03:15:13.390481500
+    DURATION: 0s, 314016300ns  (0.3140163 s)
+Called 'contains' using MEDIUM words against 'HashDictionary'  10000000 times.
+    AT: 03:15:14.038764400
+    DURATION: 0s, 648282900ns  (0.6482829 s)
+Called 'contains' using LONG words against 'HashDictionary'  10000000 times.
+    AT: 03:15:15.681464300
+    DURATION: 1s, 642699900ns  (1.6426999 s)
+Loaded 'TreeDictionary
+    AT: 03:15:15.776039600
+    DURATION: 0s, 94575300ns  (0.0945753 s)
+Called 'contains' using SHORT words against 'TreeDictionary'  10000000 times.
+    AT: 03:15:16.303678700
+    DURATION: 0s, 527639100ns  (0.5276391 s)
+Called 'contains' using MEDIUM words against 'TreeDictionary'  10000000 times.
+    AT: 03:15:17.282123800
+    DURATION: 0s, 978445100ns  (0.9784451 s)
+Called 'contains' using LONG words against 'TreeDictionary'  10000000 times.
+    AT: 03:15:19.145396
+    DURATION: 1s, 863272200ns  (1.8632722 s)
+Loaded 'LanguageDictionary
+    AT: 03:15:19.436178100
+    DURATION: 0s, 290782100ns  (0.2907821 s)
+Called 'contains' using SHORT words against 'LanguageDictionary'  10000000 times.
+    AT: 03:15:20.021369900
+    DURATION: 0s, 585191800ns  (0.5851918 s)
+Called 'contains' using MEDIUM words against 'LanguageDictionary'  10000000 times.
+    AT: 03:15:21.084387
+    DURATION: 1s, 63017100ns  (1.0630171 s)
+Called 'contains' using LONG words against 'LanguageDictionary'  10000000 times.
+    AT: 03:15:23.116759900
+    DURATION: 2s, 32372900ns  (2.0323729 s)
