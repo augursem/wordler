@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 /**
  * Class designed to streamline solving the daily <b>NYT Spelling Bee</b> puzzle. Example usage:
@@ -43,6 +44,8 @@ public class SpellingBeeSolver {
 	private String requiredLetter;
 	private String possibleLetters;
 	private TreeMapLanguageDictionary dictionary;
+
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
 	
 	public SpellingBeeSolver() {};
 	
@@ -80,13 +83,13 @@ public class SpellingBeeSolver {
 	 */
 	public void setRequiredLetter(String r) {
 		if(r == null || r.isEmpty() || r.length() != 1) {
-			System.out.println("ERROR: setRequiredLetter() takes a String with one character, value provided was: " + r);
+			LOGGER.severe("setRequiredLetter() takes a String with one character, value provided was: " + r);
 			return;
 		}
 		r = r.toUpperCase();
 		Character c = r.charAt(0);
 		if(c<'A' || c>'Z') {
-			System.out.println("ERROR: setRequiredLetter() takes a String with a letter (A-Z), value provided was: " + r);
+			LOGGER.severe("setRequiredLetter() takes a String with a letter (A-Z), value provided was: " + r);
 			return;
 		}
 		this.requiredLetter=r;
@@ -119,7 +122,7 @@ public class SpellingBeeSolver {
 	 */
 	public void setPossibleLetters(String p) {
 		if(p == null || p.isEmpty() || p.length() != 6) {
-			System.out.println("ERROR: setPossibleLetters() takes a String with " + N_POSSIBLE_LETTERS + " characters, value provided was: " + p);
+			LOGGER.severe("setPossibleLetters() takes a String with " + N_POSSIBLE_LETTERS + " characters, value provided was: " + p);
 			return;
 		}
 		p = p.toUpperCase();
@@ -127,12 +130,12 @@ public class SpellingBeeSolver {
 			Character c = p.charAt(i);
 			// Verify that this is a letter (A-Z)
 			if(c<'A' || c>'Z') {
-				System.out.println("ERROR: setPossibleLetters() take a String with letters (A-Z), value provided was: " + c);
+				LOGGER.severe("setPossibleLetters() take a String with letters (A-Z), value provided was: " + c);
 				return;
 			}
 			// Check against duplicates
 			if(p.lastIndexOf(c) != i) {
-				System.out.println("ERROR: setPossibleLetters() requires " + N_POSSIBLE_LETTERS + " unique letters. The letter '" + c + "' appears twice.");
+				LOGGER.severe("setPossibleLetters() requires " + N_POSSIBLE_LETTERS + " unique letters. The letter '" + c + "' appears twice.");
 				return;
 			}
 		}
@@ -179,15 +182,15 @@ public class SpellingBeeSolver {
 		
 		// Check that dictionary, requiredLetter, and possibleLetters are valid
 		if(!this.hasValidDictionary()) {
-			System.out.println("ERROR: No valid dictioanry to solve Spelling Bee with.");
+			LOGGER.severe("No valid dictioanry to solve Spelling Bee with.");
 			return sln;
 		}
 		if(!this.hasValidRequiredLetter()) {
-			System.out.println("ERROR: No valid required letter to solve Spelling Bee with.");
+			LOGGER.severe("No valid required letter to solve Spelling Bee with.");
 			return sln;
 		}
 		if(!this.hasValidPossibleLetters()) {
-			System.out.println("ERROR: No valid possible letters to solve Spelling Bee with.");
+			LOGGER.severe("No valid possible letters to solve Spelling Bee with.");
 			return sln;
 		}
 		
@@ -372,7 +375,7 @@ public class SpellingBeeSolver {
 		String requiredLetter = "";
 		String possibleLetters = "";
 		if(args.length < 2) {
-			System.out.println("ERROR: at least two arguments are required: requiredLetter and possibleLetters.");
+			LOGGER.severe("at least two arguments are required: requiredLetter and possibleLetters.");
 			return;
 		}
 		requiredLetter = args[0];
@@ -381,7 +384,7 @@ public class SpellingBeeSolver {
 			dictionarypath = args[2];
 		}
 		if(args.length > 3) {
-			System.out.println("WARNING: Only 3 arguments are accepted - additional arguments are ignored.");
+			LOGGER.warning("Only 3 arguments are accepted - additional arguments are ignored.");
 		}
 		TreeMapLanguageDictionary dictionary = new TreeMapLanguageDictionary();
 		DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of(dictionarypath));

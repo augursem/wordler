@@ -8,12 +8,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
 import com.augursolutions.wordler.Dictionary;
 import com.augursolutions.wordler.DictionaryLoadUtils;
+import com.augursolutions.wordler.NYTWordlerUtils;
 import com.augursolutions.wordler.TreeMapLanguageDictionary;
 import com.augursolutions.wordler.Word;
 import com.augursolutions.wordler.HashMapDictionary.HashDictionaryNode;
@@ -24,6 +26,8 @@ public class DictionaryTest {
 
 	private static Set<Class<? extends Dictionary>> dictionaryClasses = null;
 	private static Set<Class<? extends TreeMapDictionary>> treeMapDictionaryClasses = null;
+	
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
 	
 	static {
 		// Collect all extensions of the Dictionary class
@@ -37,10 +41,10 @@ public class DictionaryTest {
 	 */
     @Test
 	public void scrabbleTest() throws Exception {
-		System.out.println("DictionaryTest / scrabbleTest ...");
+    	LOGGER.info("DictionaryTest / scrabbleTest ...");
 		int dictionarySize =196601;
 		for(Class<? extends Dictionary> klass : dictionaryClasses) {
-			System.out.println("\t" + klass.getSimpleName() + " ...");
+			LOGGER.info("\t" + klass.getSimpleName() + " ...");
 			Dictionary dictionary = klass.getConstructor().newInstance();
 			DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of("./test/dictionaries","NWL2023.txt"));
 
@@ -60,9 +64,9 @@ public class DictionaryTest {
 	 */
     @Test
     public void simpleTest() throws Exception {
-		System.out.println("DictionaryTest / simpleTest ...");
+    	LOGGER.info("DictionaryTest / simpleTest ...");
 		for(Class<? extends Dictionary> klass : dictionaryClasses) {
-			System.out.println("\t" + klass.getSimpleName() + " ...");
+			LOGGER.info("\t" + klass.getSimpleName() + " ...");
 			Dictionary dictionary = klass.getConstructor().newInstance();
 			DictionaryLoadUtils.loadFromZyzzyva(dictionary,Path.of("./test/dictionaries","small_no_definitions.txt"));
 			
@@ -86,9 +90,9 @@ public class DictionaryTest {
 	 */
     @Test
     public void alphabeticalIteratorTest() throws Exception {
-		System.out.println("DictionaryTest / alphabeticalIteratorTest ...");
+    	LOGGER.info("DictionaryTest / alphabeticalIteratorTest ...");
 		for(Class<? extends TreeMapDictionary> klass : treeMapDictionaryClasses) {
-			System.out.println("\t" + klass.getSimpleName() + " ...");
+			LOGGER.info("\t" + klass.getSimpleName() + " ...");
 			TreeMapDictionary testDictionary = klass.getConstructor().newInstance();
 			
 			// TEST 1 - Add some 'words' to a dictionary and verify that the iterator gets them all and in the correct order
@@ -162,9 +166,9 @@ public class DictionaryTest {
      */
     @Test
     public void randomizationTest() throws Exception {
-		System.out.println("DictionaryTest / randomizationTest ...");
+    	LOGGER.info("DictionaryTest / randomizationTest ...");
 		for(Class<? extends Dictionary> klass : dictionaryClasses) {
-			System.out.println("\t" + klass.getSimpleName() + " ...");
+			LOGGER.info("\t" + klass.getSimpleName() + " ...");
 			
 			// TEST 1 - Create a Dictionary with some words and randomly draw from it repeatedly. Verify that each word is hit
 			// (roughly) the same number of times (number_of_draws/number_of_words +/- some error)

@@ -16,6 +16,7 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.Map;
 
 import org.reflections.Reflections;
@@ -31,6 +32,8 @@ public class DictionaryPerformaceTests {
 
 	private static Set<Class<? extends Dictionary>> dictionaryClasses = null;
 	
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
+	
 	static {
 		// Collect all extensions of the Dictionary class
 		Reflections reflections = new Reflections("com.augursolutions");    
@@ -40,7 +43,7 @@ public class DictionaryPerformaceTests {
 		boolean fastRun = (args.length > 0 && args[0].toUpperCase().equals("FAST"));	
 		
 		String runMode = fastRun ? "FAST" : "STANDARD (aka SLOW)";
-		System.out.println("Running Tests In " + runMode + " Mode ...");
+		LOGGER.info("Running Tests In " + runMode + " Mode ...");
 		DictionaryPerformaceTests test = new DictionaryPerformaceTests();
 		int nLoads         = fastRun ? 2 : 100;
 		int nContainsCalls = fastRun ? 10000 : 10000000;
@@ -134,7 +137,7 @@ public class DictionaryPerformaceTests {
 				tmpDir.mkdirs();
 			}
 			if(!tmpDir.exists() || !tmpDir.canWrite()) {
-				System.out.println("ERROR: can't create / write to test/tmp");
+				LOGGER.severe("Can't create / write to test/tmp");
 				return;
 			}
 			timer.mark("tmp directory cleared and ready");

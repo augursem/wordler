@@ -21,6 +21,8 @@ import java.util.Locale;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.util.logging.*;
+
 /**
  * Utility class for interacting with the NYT Wordler API
  * @author Steven Major
@@ -32,6 +34,8 @@ public class NYTWordlerUtils {
 	private static final String WORDLE_SERVICE_URL = "https://www.nytimes.com/svc/wordle/v2/";
 	private static final String CHARSET = "UTF-8";
 	
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
+	
 	public static void main(String args[]) {
 		/*
 		Calendar calendar = Calendar.getInstance();
@@ -39,14 +43,47 @@ public class NYTWordlerUtils {
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
 		getPuzzleDetails(calendar.getTime());
 		*/
-		Path solutionsFilePath = Path.of("./dictionaries","WordlerSolutions.txt");
-		File solutionsFile = solutionsFilePath.toFile();
-		if(!solutionsFile.exists()) {
-			createDictionaryFileFromPreviousSolutions(solutionsFilePath);
+
+		TreeMapLanguageDictionary scrabbleDictionary = new TreeMapLanguageDictionary();
+		DictionaryLoadUtils.loadFromZyzzyva(scrabbleDictionary,Path.of("./test/dictionaries","NWL2023.txt"));
+		TreeMapLanguageDictionary wordleDictionary = new TreeMapLanguageDictionary();
+		DictionaryLoadUtils.loadFromZyzzyva(wordleDictionary,Path.of("./dictionaries","WordleDictionary.txt"));
+		TreeMapLanguageDictionary wordleSolutions = new TreeMapLanguageDictionary();
+		DictionaryLoadUtils.loadFromZyzzyva(wordleSolutions,Path.of("./dictionaries","WordleSolutions.txt"));
+
+		TreeMapLanguageDictionary strangeWordleWords = new TreeMapLanguageDictionary();
+		for(Word w : wordleDictionary) {
+			if(!scrabbleDictionary.contains(w.toString())) {
+				strangeWordleWords.add(w);
+			}
 		}
-		else {
-			updatePreviousSolutionsDictionaryFile(solutionsFilePath);
+		
+		DictionaryFilter filter = new DictionaryFilter();
+	    filter.setWordSizeMax(5);
+	    filter.setWordSizeMin(5);
+		TreeMapLanguageDictionary strangeScrabbleWords = new TreeMapLanguageDictionary();
+		TreeMapLanguageDictionary fiveLetterScrabble = new TreeMapLanguageDictionary();
+		DictionaryLoadUtils.loadFromZyzzyva(fiveLetterScrabble,Path.of("./test/dictionaries","NWL2023.txt"));
+		for(Word w : scrabbleDictionary) {
+			if(w.length() != 5) {
+				fiveLetterScrabble.remove(w.toString());
+			}
 		}
+		for(Word w : fiveLetterScrabble) {
+			if(!wordleDictionary.contains(w.toString())) {
+				strangeScrabbleWords.add(w);
+				LOGGER.info(w.toString());
+				if(w.hasDefintiions()) {
+					LOGGER.info("\t" + w.getDefinitions().get(0));
+				}
+			}
+		}
+	    
+
+		LOGGER.info("Number of Wordle words : " + wordleDictionary.getSize());
+		LOGGER.info("Number of 5 Letter Words in Scrabble Dictionary: " + fiveLetterScrabble.getSize());
+		LOGGER.info("Number of Wordle words NOT in Scrabble Dictionary: " + strangeWordleWords.getSize());
+		LOGGER.info("Number of Scrabble words NOT in Wordle Dictionary: " + strangeScrabbleWords.getSize());
 	}
 	
 	/**
@@ -65,7 +102,7 @@ public class NYTWordlerUtils {
 	 */
 	public static void createDictionaryFileFromPreviousSolutions(Path dictionaryPath) {
 		if(dictionaryPath == null) {
-			Log.error("dictionaryPath is null");
+			LOGGER.severe("dictionaryPath is null");
 			return;
 		}
 		File dictionaryFile = null;
@@ -82,7 +119,7 @@ public class NYTWordlerUtils {
 			createdFile = false;
 		} finally {
 			if(!createdFile || !dictionaryFile.canWrite()) {
-				Log.error("Can't create, overwrite, or write to '",dictionaryPath,"'");
+				LOGGER.severe("Can't create, overwrite, or write to '" + dictionaryPath + "'");
 				return;
 			}
 		}
@@ -126,7 +163,7 @@ public class NYTWordlerUtils {
 	 */
 	public static boolean updatePreviousSolutionsDictionaryFile(Path dictionaryPath) {
 		if(dictionaryPath == null) {
-			Log.error("dictionaryPath is null");
+			LOGGER.severe("dictionaryPath is null");
 			return false;
 		}
 		File dictionaryFile = null;
@@ -144,7 +181,7 @@ public class NYTWordlerUtils {
 			e.printStackTrace();
 		} finally {
 			if(!canReadWriteToFile) {
-				Log.error("Can't read and update '",dictionaryPath,"' - check that it exists and that it is readable wnd writable.");
+				LOGGER.severe("Can't read and update '" + dictionaryPath + "' - check that it exists and that it is readable wnd writable.");
 				return false;
 			}
 		}
@@ -159,7 +196,7 @@ public class NYTWordlerUtils {
             	i++;
             	String[] words = line.split("\s+");
             	if(words == null || words.length != 2) {
-            		Log.warn("At line ",i," of '",dictionaryPath,"': expected '<word> <date>' but found '",line,"'");
+            		LOGGER.warning("At line " + i + " of '" + dictionaryPath + "': expected '<word> <date>' but found '" + line + "'");
             	} else {
             		// YYYY-MM-DD
             		lastRecordedDateString = words[1];
@@ -167,11 +204,11 @@ public class NYTWordlerUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
-			Log.error("something went wrong when trying to read '",dictionaryPath,"'");
+            LOGGER.severe("something went wrong when trying to read '" + dictionaryPath + "'");
 			return false;
         }
         if(lastRecordedDateString == null || lastRecordedDateString.isEmpty()) {
-        	Log.error("Something went wrong when reading '",dictionaryPath,"' to retrieve the last recorded solution date.");
+        	LOGGER.severe("Something went wrong when reading '" + dictionaryPath + "' to retrieve the last recorded solution date.");
         	return false;
         }
         
@@ -187,7 +224,7 @@ public class NYTWordlerUtils {
 			// Sanity check - make sure lastRecordedDate is before today
 	        Date today = new Date();
 			if(!lastRecordedDate.before(today)) {
-				Log.error("Last date with a wordle solution in '",dictionaryPath,"' is: ",lastRecordedDateString,", which is in the future.");
+				LOGGER.severe("Last date with a wordle solution in '" + dictionaryPath + "' is: " + lastRecordedDateString + ", which is in the future.");
 				return false;
 			}
 			
@@ -238,7 +275,7 @@ public class NYTWordlerUtils {
 				//Check for duplicate solutions, just as a point of curiosity
 				String slnDate = getDateEndpointString(calendar.getTime());
 				if(solutions.contains(sln)) {
-					Log.error("Duplicate solution found at date | solution '",slnDate,"' | ",sln,"'");
+					LOGGER.info("Duplicate solution found at date | solution '" + slnDate + "' | " + sln + "'");
 				} else {
 					solutions.add(sln);
 				}
@@ -289,31 +326,6 @@ public class NYTWordlerUtils {
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
-		}
-	}
-	
-	public static class Log {
-		private Log() {};
-		public static void error(Object ... msg) {
-			System.out.println(compose("ERRROR: ",msg));
-		}
-		public static void warn(Object ... msg) {
-			System.out.println(compose("WARNING: ",msg));
-		}
-		public static void info(Object ... msg) {
-			System.out.println(compose("INFO: ",msg));
-		}
-		
-		private static String compose(Object ... msg) {
-			StringBuilder sb = new StringBuilder();
-			for(Object o : msg) {
-				if(o == null) {
-					sb.append("null");
-				} else {
-					sb.append(o.toString());
-				}
-			}
-			return sb.toString();
 		}
 	}
 }

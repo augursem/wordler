@@ -28,6 +28,7 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- jupiter -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -38,6 +39,7 @@
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- Functional Dependencies -->
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
@@ -101,5 +103,15 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <resources>
+      <!-- Copy over the log4j2.xml file to the target directory -->
+      <resource>
+        <directory>src/test/resources</directory>
+        <targetPath>${project.build.directory}</targetPath>
+        <includes>
+          <include>log4j2.xml</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 </project>

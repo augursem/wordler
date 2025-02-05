@@ -159,7 +159,7 @@ relative to the `HashSet`/`TreeSet` implementations.
 | TreeMapDictionary         |  0.9454727 s                     |
 | TreeMapLanguageDictionary |  1.0859602 s                     |
 
-# Long Words
+## Long Words
 | Dictionary Class          | Time To Lookup  10,000,000 Words |
 | ------------------------- | -------------------------------- |
 | HashSetDictionary         |  0.1212057 s                     |
