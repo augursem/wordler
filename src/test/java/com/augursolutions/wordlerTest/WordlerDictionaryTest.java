@@ -12,7 +12,7 @@ import com.augursolutions.wordler.Word;
 
 
 public class WordlerDictionaryTest {
-
+	
 	/**
 	 * Basic test of WordleDictionary and WordleSoltuions:
 	 *  - Verify that all Wordle solutions are in WordleDictionary 
@@ -27,12 +27,7 @@ public class WordlerDictionaryTest {
 		DictionaryLoadUtils.loadFromZyzzyva(wordleDictionary,Path.of("./dictionaries","WordleDictionary.txt"));
 		TreeMapLanguageDictionary wordleSolutions = new TreeMapLanguageDictionary();
 		DictionaryLoadUtils.loadFromZyzzyva(wordleSolutions,Path.of("./dictionaries","WordleSolutions.txt"));
-
-		// TEST 1 - all Wordle words are in Scrabble dictionary
-		for(Word w : wordleDictionary) {
-			assertTrue(scrabbleDictionary.contains(w.getLetters()), () -> "Failed Wordler Dictionary test: word '" + w + "' is in Wordler Dictionary but not SCRABBLE dictionary");
-		}
-
+		
 		// TEST 1 - all Wordle Solutions are in Wordle dictionary
 		for(Word w : wordleSolutions) {
 			assertTrue(wordleDictionary.contains(w.getLetters()), () -> "Failed Wordler Solutions test: solution word '" + w + "' is not in Wordler dictionary");

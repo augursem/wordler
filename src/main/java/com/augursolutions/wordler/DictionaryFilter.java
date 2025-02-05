@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.augursolutions.wordler.HashMapDictionary.HashDictionaryNode;
 
@@ -37,6 +38,7 @@ public class DictionaryFilter {
 	private Set<Character> possibleLetters = new HashSet<>();
 	private Integer wordSizeMin = null;
 	private Integer wordSizeMax = null;
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
 	
 	public boolean hasRequiredLetters() {
 	  return this.requiredLetters != null && !this.requiredLetters.isEmpty();	
@@ -93,8 +95,8 @@ public class DictionaryFilter {
 	
 	public void setWordSizeMin(Integer i) {
 		if(this.hasWordSizeMax() && i > this.wordSizeMax) {
-		  System.out.println("ERROR: Filter has a word size max of " + this.wordSizeMax + "; can't have wordSizeMin > wordSizeMax. No wordSizeMin will be set.");
-		  return;
+			LOGGER.severe("Filter has a word size max of " + this.wordSizeMax + "; can't have wordSizeMin > wordSizeMax. No wordSizeMin will be set.");
+			return;
 		}	
 		this.wordSizeMin = i;
 	}
@@ -109,7 +111,7 @@ public class DictionaryFilter {
 	
 	public void setWordSizeMax(Integer i) {
 		if(this.hasWordSizeMin() && i < this.wordSizeMin) {
-			System.out.println("ERROR: Filter has a word size min of " + this.wordSizeMin + " - can't have wordSizeMax < wordSizeMin. No wordSizeMax will be set.");
+			LOGGER.severe("Filter has a word size min of " + this.wordSizeMin + " - can't have wordSizeMax < wordSizeMin. No wordSizeMax will be set.");
 			return;
 		}	
 		this.wordSizeMax = i;

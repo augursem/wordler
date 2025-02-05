@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,8 @@ import com.augursolutions.wordler.Word.Part_Of_Speech;
  */
 public final class DictionaryLoadUtils {
 
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
+	
 	// private constructor - all methods are static
 	private DictionaryLoadUtils() {};
 	
@@ -41,7 +44,7 @@ public final class DictionaryLoadUtils {
 			return false;
 		}
 		if(wordList == null || !wordList.exists()) {
-			System.out.println("File '" + dictionaryFile.toString() + "' does not exist or is not readable.");
+			LOGGER.severe("File '" + dictionaryFile.toString() + "' does not exist or is not readable.");
 			return false;
 		}
 		try(BufferedReader br = new BufferedReader(new FileReader(wordList)); ) {

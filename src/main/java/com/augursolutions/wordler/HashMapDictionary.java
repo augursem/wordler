@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 /**
  *  
@@ -38,6 +39,8 @@ public class HashMapDictionary extends Dictionary {
 	private static final long serialVersionUID = 1L;
 	protected HashDictionaryNode rootNode;
 	protected int size;
+
+	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
 	
 	public HashMapDictionary() {
 		this.rootNode = getRootNode();
@@ -183,7 +186,7 @@ public class HashMapDictionary extends Dictionary {
 		for(Map.Entry<Character, HashDictionaryNode> entry : node.children.entrySet()) {
 			HashDictionaryNode childNode = entry.getValue();
 			if(childNode.isWordEning())
-				System.out.println(childNode.printChildren());
+				LOGGER.info(childNode.printChildren());
 			else
 				printAll(childNode);
 		}
@@ -326,7 +329,7 @@ public class HashMapDictionary extends Dictionary {
 			while(currentNode.getParent() != null) {
 				if(idx < 0) {
 					//ERROR - should never happen. Implies distanceFromRoot is not correct
-					System.out.println("ERROR: In getWordFragment, distanceFromRoot was not correct.");
+					LOGGER.severe("In getWordFragment, distanceFromRoot was not correct.");
 					return null;
 				}
 				letters[idx--] = currentNode.getLetter();

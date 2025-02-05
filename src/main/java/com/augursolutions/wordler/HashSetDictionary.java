@@ -2,7 +2,7 @@ package com.augursolutions.wordler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import java.util.logging.Logger;
 import java.util.HashSet;
 
 /**
