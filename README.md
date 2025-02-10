@@ -1,15 +1,103 @@
 # Overview
-`wordler` is a dictionary creation, filtering and analysis class for solving word puzzles.
+`wordler` is a dictionary creation, filtering and analysis class for solving word puzzles. 
 
 This is still very much a work in progress. The main Dictionary class is fully functional and a class for solving the NYT Spelling Bee puzzle, [SpellingBeeSolver](#SpellingBeeSolver) serves as an initial proof of concept - 
-solution is essentially just a filter applied to a dictionary with some formatted printing to the console.
+solution is essentially just a filter applied to a dictionary with some formatted printing to the console. The [WordleEngine](#WordleEngine), [WordleStrategy](#WordleStrategy), and [WordleTournament](#WordleTournament) classes
+are meant to be used together to develop and compare different solution strategies for the NYT Wordle puzzle. The [WordleCLI](#WordleCLI) class uses [WordleEngine](#WordleEngine) to create a (very) simple command-line 
+version of Wordle.
 
 The main goal is play with the idea of a best solution strategy for the NYT Wordle puzzle, which is essentially a word-based version of the classic game "Mastermind". Because this is a personal project
-that I am working on because I enjoy working on it, detours (I suspect several) will be taken along the way. The current detour I find myself on is an investigation into how to best design a `Dictionary` class. 
+that I am working on because I enjoy working on it, detours (I suspect several) will be taken along the way. For example, I spent a bit of time thinking about how to best design a `Dictionary` class. 
 For a discussion on this, see the [discussion about the myriad `Dictionary` classes](#why-are-there-so-many-dictionary-classes?)
 
 # Documentation
 Documentation (beyond this file) is located in the doc folder and is currently the javadoc generated as html.
+
+## WordleEngine
+Provides basic functionality for creating a Wordle puzzle. It is initialized with a dictionary of valid guesses and provides functionality to create a puzzle by specifying a solution, and then provides the standard 
+Wordle response to guesses made against that puzzle (green indicates the letter of the guessed word is in the solution and in the exact position guessed, yellow indicates that the letter of the guessed word
+is in the solution but in a different position guessed, and gray indicates that the guessed letter is not in the solution (or, if it appears more than once in the guessed word, that the number of 
+instances of that letter in the solution is less than the number of instances in the guessed word).
+
+The WordleEngine class is used to run the cammand-line Wordle game provided by [WordleCLI](#WordleCLI) and also the solution strategy comparison class, [WordleTournament](#WordleTournament).
+
+## WordleCLI
+Provides a very simple command-line version of Wordle. The class should be invoked with no arguments - a puzzle solution will be chosen at random. 
+
+### Sample Usage
+```cmd
+This is WordleCLI
+Randomly choosing a word ...
+Puzzle is ready.
+What is your guess?
+GRAND
+|   G    |   R    |   A    |   N    |   D    |
+|  Gray  | Green  |  Gray  | Green  |  Gray  |
+What is your guess?
+ZZZZZ
+Invalid guess, try again ...
+What is your guess?
+BRINK
+|   B    |   R    |   I    |   N    |   K    |
+|  Gray  | Green  |  Gray  | Green  | Green  |
+What is your guess?
+FRONT
+|   F    |   R    |   O    |   N    |   T    |
+|  Gray  | Green  |  Gray  | Green  |  Gray  |
+What is your guess?
+CRUNK
+|   C    |   R    |   U    |   N    |   K    |
+| Green  | Green  | Green  | Green  | Green  |
+NAILED IT IN 4 GUESSES! (TOOK YOU LONG ENOUGH)
+Bye
+```
+
+## WordleStrategy
+This is an interface that describes a very simple behavior for a Wordle solution class - it should produce a first guess and also, given a previous guess and previous response,
+produce a next guess. The [SimpleWordleStrategy](#SimpleWordleStrategy) class is currently the only implementation of it
+
+### SimpleWordleStrategy
+This is a proof-of-concept class for other solution strategies. It keeps a full dictionary of words to choose from which is trimmed down with each guess. The first guess is always "GRAND" 
+(which in my experience does pretty ok). To get a next guess, the class takes the response and removes all words from its dictionary that don't meet the information provided by the response.
+The first word (alphabetically) in the reduced dictionary is used as the next guess.
+
+Details are in the class itself, but the logic is a two stage process:
+ 1. Sort letters into 4 categories: Green, Yellow, Gray, Grayish
+ 2. Check word against letters in each category, if at any point there is a discrepancy, remove the word from the dictionary (and stop checking remaining categories).
+ 
+#### Green Letters
+Straightforward - all letters that were green in the response. If a word in the dictionary does not have that letter in that position, it is removed
+
+#### Yellow Letters
+Also straightforward - all letters that were yellow in the response. A word is removed if it either doesn't contain the yellow letter or if it has that letter in the same position.
+
+#### Gray Letters
+Letters that gray in the response are gray and not grayish if the same letter does not also appear in the guess and get marked as green or yellow, meaning this letter just doesn't
+appear in the word at all. Any word that contains this letter is removed.
+
+#### Grayish Letters
+Grayish letters are letters that were gray, but where the same letter was marked as green or yellow in a different location. For example, if the solution is "GREEN" and the guess is "GEESE",
+the last E in GEESE is marked as GRAY. Removing all words with an E would be a mistake though. In this case, the 3rd E in GEESE being gray tells us that there are exactly 2 Es in the solution.
+For grayish letters, there are 2 rounds of filtering performed:
+ 1. Remove all words that contain the letter in the exact position in which it was guessed.
+ 2. Count the number of times that letter appears in the Green and Yellow lists - this is how many times the letter appears in the word. Remove any words that don't contain exactly that many
+ instances of the letter
+
+## WordleTournament
+This class is meant to take some number of [WordleStrategy](#WordleStrategy) objects and to have them all try to solve the same collection of puzzles. The distribution of results for each strategy is computed
+(number of puzzles solved in 1 guess, 2 guesses, .... , 6 guesses, and number of puzzles failed). 
+
+### SimpleWordleStrategy Results
+Using all previous wordle solutions (1,332 when it was run), the [SimpleWordleStrategy](#SimpleWordleStrategy) had a 98.9% succes rate:
+| Number of Guesses   | Frequency    |
+| ------------------- | ------------ |
+| 1                   | 1 (0.08%)    |
+| 2                   | 23 (1.73%)   |
+| 3                   | 135 (10.14%) |
+| 4                   | 400 (30.03%) |
+| 5                   | 379 (28.45%) |
+| 6                   | 246 (18.47%) |
+| 7+ (fail)           | 148 (11.11%) |
 
 ## SpellingBeeSolver
 The [New York Times Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) is a daily online puzzle that consists of 7 letters. The goal is to find all words that use only those letters, with the caveat that one of 
@@ -45,8 +133,9 @@ Once I had it working, I stopped and asked myself the following questions:
 2. What benefits (if any) does the M-ary Tree approach provide vs something simpler, e.g. just storing every word in a TreeSet?
 3. How much memory do the different implementation options use?
 4. How easy is it to implement filtering for these different classes? In which implementation is filtering words based on length and position of letters most efficient?
-In order to answer these questions, I made the `Dictionary` class abstract and created six extensions of it. See the [Performance Tests](#performance-tests) section for answers to the above questions
 5. What kind of performance gains do I get by abandoning alphabetical ordering (i.e. use a `HashMap`/`HashSet` instead of a `TreeMap`/`TreeSet`)?
+
+In order to answer these questions, I made the `Dictionary` class abstract and created six extensions of it. See the [Performance Tests](#performance-tests) section for answers to the above questions
 
 ### Dictionary (Abstract Class)
 All `Dictionary` classes have an `add`, `remove`, `contains`, and `getWord` method and implement `Serializable` as well as `Iterable<Word>`. Further, to support future designs for testing puzzle solution

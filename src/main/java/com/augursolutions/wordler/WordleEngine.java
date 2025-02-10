@@ -171,6 +171,19 @@ public class WordleEngine {
 	}
 	
 	/**
+	 * @param guessNumber guess number to get a response from. guessNumber is 1-based, so passing a value of 
+	 * 1 will retrieve the first guess. Guess values are null for guessNumber > guessCount
+	 * @see {@link WordleEngine.Response}
+	 * @return requested guess.
+	 */
+	public String getGuess(int guessNumber) {
+		if(guessNumber > this.puzzle.guessCount) {
+			return null;
+		}
+		return this.puzzle.guesses[guessNumber-1];
+	}
+	
+	/**
 	 * Internally used by {@link WordleEngine} class to track guesses and responses to a Wordle game.
 	 */
 	private class Puzzle {
