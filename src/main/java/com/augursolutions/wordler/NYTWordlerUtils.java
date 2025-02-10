@@ -37,53 +37,8 @@ public class NYTWordlerUtils {
 	private static final Logger LOGGER = Logger.getLogger( NYTWordlerUtils.class.getName() );
 	
 	public static void main(String args[]) {
-		/*
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		calendar.add(Calendar.DAY_OF_MONTH, -1);
-		getPuzzleDetails(calendar.getTime());
-		*/
 
-		TreeMapLanguageDictionary scrabbleDictionary = new TreeMapLanguageDictionary();
-		DictionaryLoadUtils.loadFromZyzzyva(scrabbleDictionary,Path.of("./test/dictionaries","NWL2023.txt"));
-		TreeMapLanguageDictionary wordleDictionary = new TreeMapLanguageDictionary();
-		DictionaryLoadUtils.loadFromZyzzyva(wordleDictionary,Path.of("./dictionaries","WordleDictionary.txt"));
-		TreeMapLanguageDictionary wordleSolutions = new TreeMapLanguageDictionary();
-		DictionaryLoadUtils.loadFromZyzzyva(wordleSolutions,Path.of("./dictionaries","WordleSolutions.txt"));
-
-		TreeMapLanguageDictionary strangeWordleWords = new TreeMapLanguageDictionary();
-		for(Word w : wordleDictionary) {
-			if(!scrabbleDictionary.contains(w.toString())) {
-				strangeWordleWords.add(w);
-			}
-		}
-		
-		DictionaryFilter filter = new DictionaryFilter();
-	    filter.setWordSizeMax(5);
-	    filter.setWordSizeMin(5);
-		TreeMapLanguageDictionary strangeScrabbleWords = new TreeMapLanguageDictionary();
-		TreeMapLanguageDictionary fiveLetterScrabble = new TreeMapLanguageDictionary();
-		DictionaryLoadUtils.loadFromZyzzyva(fiveLetterScrabble,Path.of("./test/dictionaries","NWL2023.txt"));
-		for(Word w : scrabbleDictionary) {
-			if(w.length() != 5) {
-				fiveLetterScrabble.remove(w.toString());
-			}
-		}
-		for(Word w : fiveLetterScrabble) {
-			if(!wordleDictionary.contains(w.toString())) {
-				strangeScrabbleWords.add(w);
-				LOGGER.info(w.toString());
-				if(w.hasDefintiions()) {
-					LOGGER.info("\t" + w.getDefinitions().get(0));
-				}
-			}
-		}
-	    
-
-		LOGGER.info("Number of Wordle words : " + wordleDictionary.getSize());
-		LOGGER.info("Number of 5 Letter Words in Scrabble Dictionary: " + fiveLetterScrabble.getSize());
-		LOGGER.info("Number of Wordle words NOT in Scrabble Dictionary: " + strangeWordleWords.getSize());
-		LOGGER.info("Number of Scrabble words NOT in Wordle Dictionary: " + strangeScrabbleWords.getSize());
+		updatePreviousSolutionsDictionaryFile(Path.of("./dictionaries","WordleSolutions.txt"));
 	}
 	
 	/**

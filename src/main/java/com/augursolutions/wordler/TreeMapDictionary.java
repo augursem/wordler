@@ -34,7 +34,7 @@ public class TreeMapDictionary extends HashMapDictionary {
 	
 	public void printAll() {
 
-		for(Word w : this) {
+		for(String w : this) {
 			System.out.println(w);	
 		}
 	}

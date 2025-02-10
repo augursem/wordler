@@ -140,13 +140,6 @@ public class HashMapDictionary extends Dictionary {
 		// At the end of the word, check for WORD_ENDING node child
 		return currentNode.endsWord();
 	}
-
-	@Override
-	public Word getWord(String s) {
-	   if(!this.contains(s))
-		   return null;
-	   return new Word(s);
-	}
     
 	/**
 	 * Get the {@link HashDictionaryNode} associated with a word fragment. For example, if the word "DOG" is in the
@@ -486,11 +479,11 @@ public class HashMapDictionary extends Dictionary {
     }
 
 	@Override
-	public Iterator<Word> iterator() {
+	public Iterator<String> iterator() {
 		return new WordIterator();
 	}
 	
-    private class WordIterator implements Iterator<Word> {
+    private class WordIterator implements Iterator<String> {
     	private Iterator<HashDictionaryNode> iter;
     	public WordIterator() {
     		this.iter = nodeIterator();
@@ -502,8 +495,8 @@ public class HashMapDictionary extends Dictionary {
 		}
 
 		@Override
-		public Word next() {
-			return new Word(this.iter.next().getParent().getWordFragment());
+		public String next() {
+			return this.iter.next().getParent().getWordFragment();
 		}
     }
     

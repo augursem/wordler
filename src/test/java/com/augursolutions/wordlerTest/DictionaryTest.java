@@ -17,7 +17,6 @@ import com.augursolutions.wordler.Dictionary;
 import com.augursolutions.wordler.DictionaryLoadUtils;
 import com.augursolutions.wordler.NYTWordlerUtils;
 import com.augursolutions.wordler.TreeMapLanguageDictionary;
-import com.augursolutions.wordler.Word;
 import com.augursolutions.wordler.HashMapDictionary.HashDictionaryNode;
 import com.augursolutions.wordler.TreeMapDictionary;
 import com.augursolutions.wordler.TreeMapLanguageDictionary.LanguageDictionaryNode;
@@ -52,10 +51,10 @@ public class DictionaryTest {
 			assertTrue(dictionary.getSize() == dictionarySize, () -> "Failed Scrabble 2023 size test: expected Dictionary Size " + dictionarySize + ", but size was: " + dictionary.getSize());
 			
 			// TEST 2 - Verify that "NOMENCLATOR" is in this dictionary
-			assertTrue(dictionary.getWord("NOMENCLATOR") != null, ()-> "Failed to find word 'NOMENCLATOR' after adding it");
+			assertTrue(dictionary.contains("NOMENCLATOR"), ()-> "Failed to find word 'NOMENCLATOR' after adding it");
 			
 			// TEST 3 - Verify that "WRDDNE" is not in this dictionary
-			assertTrue(dictionary.getWord("WRDDNE") == null, ()-> "Failed non-existenent word (WRDDNE) test");
+			assertTrue(!dictionary.contains("WRDDNE"), ()-> "Failed non-existenent word (WRDDNE) test");
 		}
 	}
 	
@@ -74,7 +73,7 @@ public class DictionaryTest {
 			assertTrue(dictionary.getSize() == 14, ()-> "Failed double word in dictionary file test");
 			
 			// TEST 2 - Verify size after adding a word
-			assertTrue(dictionary.getWord("BATS") == null, ()-> "BATS is already in the simple dictionary example");
+			assertTrue(!dictionary.contains("BATS"), ()-> "BATS is already in the simple dictionary example");
 			dictionary.add("BATS");
 			assertTrue(dictionary.getSize() == 15, ()-> "Failed add word test");
 			
@@ -176,44 +175,42 @@ public class DictionaryTest {
 			d.setSeed(12345);
 			int nDraws = 5000;
 			double errorAllowance = 0.05;
-			String[] wordStrings = {
-				"one",
-				"dos",
-				"amigos",
-				"zebreafish"
+			String[] words = {
+				"ONE",
+				"DOS",
+				"AMIGOS",
+				"ZEBRAFISH"
 			};
-			Word[] words = new Word[wordStrings.length];
-			Map<Word,Integer> wordCounts = new HashMap<>();
-			for(int i=0; i<wordStrings.length; i++) {
-				d.add(wordStrings[i]);
-				words[i] = d.getWord(wordStrings[i]);
+			Map<String,Integer> wordCounts = new HashMap<>();
+			for(int i=0; i<words.length; i++) {
+				d.add(words[i]);
 				wordCounts.put(words[i], 0);
 			}
 			
 			for(int i=0; i<nDraws; i++) {
-				Word w = d.getRandomWord();
+				String w = d.getRandomWord();
 				wordCounts.put(w, wordCounts.get(w)+1);
 			}
 			
-			double p_lower = Math.floor( (1.0-errorAllowance)*nDraws/wordStrings.length );
-			double p_upper = Math.ceil( (1.0+errorAllowance)*nDraws/wordStrings.length );
-			for(Word w : words) {
+			double p_lower = Math.floor( (1.0-errorAllowance)*nDraws/words.length );
+			double p_upper = Math.ceil( (1.0+errorAllowance)*nDraws/words.length );
+			for(String w : words) {
 				int count = wordCounts.get(w);
 				assert( count > p_lower && count < p_upper ) : "getRandomWord() Test: Word '" +  w + "' appeared " + count + " times, limits were: (" + p_lower + " , " + p_upper + ")";
 			}
 			
 			// TEST 2 - Repeat TEST 1 but with a lookup table
-			Word[] allWords = d.getRandomWordLookupTable();
-			for(int i=0; i<wordStrings.length; i++) {
+			String[] allWords = d.getRandomWordLookupTable();
+			for(int i=0; i<words.length; i++) {
 				wordCounts.put(words[i], 0);
 			}
 			
 			for(int i=0; i<nDraws; i++) {
-				Word w = d.getRandomWord(allWords);
+				String w = d.getRandomWord(allWords);
 				wordCounts.put(w, wordCounts.get(w)+1);
 			}
 			
-			for(Word w : words) {
+			for(String w : words) {
 				int count = wordCounts.get(w);
 				assertTrue( count > p_lower && count < p_upper , ()-> "getRandomWord(lookupTable) Test: Word '" +  w + "' appeared " + count + " times, limits were: (" + p_lower + " , " + p_upper + ")");
 			}

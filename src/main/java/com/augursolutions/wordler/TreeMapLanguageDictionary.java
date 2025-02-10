@@ -1,5 +1,6 @@
 package com.augursolutions.wordler;
 
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -36,7 +37,7 @@ import java.util.TreeMap;
  * @author Steven Major
  *
  */
-public class TreeMapLanguageDictionary extends TreeMapDictionary {
+public class TreeMapLanguageDictionary extends TreeMapDictionary implements LanguageDictionary {
 
 	private static final long serialVersionUID = 1L;
 
@@ -125,7 +126,7 @@ public class TreeMapLanguageDictionary extends TreeMapDictionary {
 	}
 
 	@Override
-	public Iterator<Word> iterator() {
+	public Iterator<Word> wordIterator() {
 		return new WordIterator();
 	}
 	
@@ -184,13 +185,29 @@ public class TreeMapLanguageDictionary extends TreeMapDictionary {
 		}
 		
     }
+
+	@Override
+	public Dictionary clone() {
+	    try {
+	    	Dictionary d = getClass().getDeclaredConstructor().newInstance();
+	    	Iterator<Word> iter = this.wordIterator();
+	    	Method addMethod = d.getClass().getMethod("add", Word.class);
+	    	while(iter.hasNext()) {
+	    		addMethod.invoke(iter.next().clone());
+	    	}
+	        return d;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } 
+	    return null;
+	}
 	
 	public static void main(String[] args) {
 
 
 		TreeMapLanguageDictionary simple = new TreeMapLanguageDictionary();
 		DictionaryLoadUtils.loadFromZyzzyva(simple,Path.of("./test/dictionaries","small_no_definitions.txt"));
-		for(Word w : simple) {
+		for(String w : simple) {
 			System.out.println(w);
 		}
 	}

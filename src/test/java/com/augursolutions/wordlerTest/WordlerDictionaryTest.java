@@ -3,15 +3,17 @@ package com.augursolutions.wordlerTest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 
 import com.augursolutions.wordler.DictionaryLoadUtils;
 import com.augursolutions.wordler.TreeMapLanguageDictionary;
-import com.augursolutions.wordler.Word;
 
 
 public class WordlerDictionaryTest {
+
+	private static final Logger LOGGER = Logger.getLogger( WordlerDictionaryTest.class.getName() );
 	
 	/**
 	 * Basic test of WordleDictionary and WordleSoltuions:
@@ -20,7 +22,7 @@ public class WordlerDictionaryTest {
 	 */
 	@Test
 	public void wordleDictionaryTest() throws Exception {
-		System.out.println("WordleTest / wordleDictionaryTest ...");
+		LOGGER.info("WordleTest / wordleDictionaryTest ...");
 		TreeMapLanguageDictionary scrabbleDictionary = new TreeMapLanguageDictionary();
 		DictionaryLoadUtils.loadFromZyzzyva(scrabbleDictionary,Path.of("./test/dictionaries","NWL2023.txt"));
 		TreeMapLanguageDictionary wordleDictionary = new TreeMapLanguageDictionary();
@@ -29,8 +31,8 @@ public class WordlerDictionaryTest {
 		DictionaryLoadUtils.loadFromZyzzyva(wordleSolutions,Path.of("./dictionaries","WordleSolutions.txt"));
 		
 		// TEST 1 - all Wordle Solutions are in Wordle dictionary
-		for(Word w : wordleSolutions) {
-			assertTrue(wordleDictionary.contains(w.getLetters()), () -> "Failed Wordler Solutions test: solution word '" + w + "' is not in Wordler dictionary");
+		for(String w: wordleSolutions) {
+			assertTrue(wordleDictionary.contains(w), () -> "Failed Wordler Solutions test: solution word '" + w + "' is not in Wordler dictionary");
 		}
 	}
 }
