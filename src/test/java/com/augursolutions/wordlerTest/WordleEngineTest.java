@@ -21,8 +21,8 @@ public class WordleEngineTest {
 	 *  - Verify that Wordle dictionary is a subset of SCRABBLE dictionary
 	 */
 	@Test
-	public void wordleDictionaryTest() throws Exception {
-		LOGGER.info("WordleTest / wordleDictionaryTest ...");
+	public void wordleEngineBasicTest() throws Exception {
+		LOGGER.info("WordleEngineTest / wordleEngineBasicTest ...");
 		TreeMapLanguageDictionary wordleDictionary = new TreeMapLanguageDictionary();
 		DictionaryLoadUtils.loadFromZyzzyva(wordleDictionary,Path.of("./dictionaries","WordleDictionary.txt"));
 		WordleEngine wordleEngine = new WordleEngine(wordleDictionary);
