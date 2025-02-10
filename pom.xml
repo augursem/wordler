@@ -101,17 +101,22 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.6.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.5.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>java</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <mainClass>com.augursolutions.wordler.WordleCLI</mainClass>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
-    <resources>
-      <!-- Copy over the log4j2.xml file to the target directory -->
-      <resource>
-        <directory>src/test/resources</directory>
-        <targetPath>${project.build.directory}</targetPath>
-        <includes>
-          <include>log4j2.xml</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
 </project>

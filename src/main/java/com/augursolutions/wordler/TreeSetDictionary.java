@@ -43,37 +43,9 @@ public class TreeSetDictionary extends Dictionary {
 		return this.allWords.contains(word);
 	}
 
-	@Override
-	public Word getWord(String s) {
-	   if(!this.contains(s))
-		   return null;
-	   return new Word(s);
-	}
-
-	public Iterator<String> stringIterator() {
+	public Iterator<String> iterator() {
 		return this.allWords.iterator();
 	}
-    
-	@Override
-	public Iterator<Word> iterator() {
-		return new WordIterator();
-	}
-    private class WordIterator implements Iterator<Word> {
-    	private Iterator<String> iter;
-    	public WordIterator() {
-    		this.iter = stringIterator();
-    	}
-    	
-		@Override
-		public boolean hasNext() {
-			return this.iter.hasNext();
-		}
-
-		@Override
-		public Word next() {
-			return new Word(this.iter.next());
-		}
-    }
 
 	public static void main(String[] args) {
 		ArrayList<String> strings = new ArrayList<>();
@@ -85,7 +57,7 @@ public class TreeSetDictionary extends Dictionary {
 		TreeSetDictionary d = new TreeSetDictionary();
 		d.addAll(strings);
 		
-		for(Word w : d) {
+		for(String w : d) {
 			System.out.println(w);
 		}
 	}

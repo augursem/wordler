@@ -9,7 +9,7 @@ import java.util.List;
  * @author Steven Major
  *
  */
-public class Word implements Serializable {
+public class Word implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -235,5 +235,25 @@ public class Word implements Serializable {
 	@Override
 	public final int hashCode() {
 	    return this.getLetters().hashCode();
+	}
+	
+	public Word clone() {
+		Word w = new Word();
+		w.setLetters(letters);
+		if(this.definitions == null)
+			w.setDefinitions(null);
+		else {
+			for(String def : this.definitions) {
+				w.getDefinitions().add(def);
+			}
+		}
+		if(this.partsOfSpeech == null)
+			w.setPartsOfSpeech(null);
+		else {
+			for(Part_Of_Speech pos : this.partsOfSpeech) {
+				w.getPartsOfSpeech().add(pos);
+			}
+		}
+		return w;
 	}
 }

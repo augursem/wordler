@@ -10,8 +10,7 @@ import com.augursolutions.wordler.HashMapDictionary.HashDictionaryNode;
 
 /**
  * 
- * Used with the Dictionary.filter method to remove words
- * from a dictionary based on certain rules
+ * Used to remove words from a {@link TreeMapLanguageDictionary} based on certain rules
  * <p>
  *  <b>requiredLetters:</b> Letters that must be in the word. If a word
  *    does not contain ALL letters in the string, it is removed.

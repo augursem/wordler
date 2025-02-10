@@ -3,6 +3,7 @@ package com.augursolutions.wordler;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -204,7 +205,9 @@ public class SpellingBeeSolver {
 	    sln.setAllAnswers(spellingBeeAnswers);
 	    
 	    //For each word in the full solution set, check if it is a pangram (uses all 6 letters) and also store by word length
-	    for(Word w : spellingBeeAnswers) {
+	    Iterator<Word> answersIter = spellingBeeAnswers.wordIterator();
+	    while(answersIter.hasNext()) {
+	    	Word w = answersIter.next();
 	    	// Check for pangram
 	    	boolean pangram = true;
 	    	for(char c : this.getPossibleLetters().toCharArray()) {
